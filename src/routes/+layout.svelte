@@ -1,6 +1,6 @@
 <script>
 	import '../app.css';
-	import { theme, back, forth, showBack, showForth, cancel, save } from '$lib/util';
+	import { theme, back, forth, showBack, showForth, cancel, save, activeTab, db } from '$lib/util';
 	import { Navbar, NavBrand, DarkMode, NavUl, NavLi, Button, ButtonGroup, Label, P } from 'flowbite-svelte';
 	import {
 		CaretLeftSolid,
@@ -12,6 +12,7 @@
 	// import logo from '$lib/assets/logo.webp';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
+	import { get } from 'svelte/store';
 
 	let disableBack = false;
 	showBack.subscribe((show) => {
@@ -54,6 +55,17 @@
 	const savePressed = () => {
 		save.update((val) => val + 1);
 	};
+
+	async function deploy() {
+		let doc = await get(db).get(get(activeTab));
+		fetch('deploy', {
+			method: 'POST',
+			body: JSON.stringify({ payload: doc }),
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		});
+	}
 </script>
 
 <svelte:window on:keydown={keypress} />
@@ -89,12 +101,13 @@
 			<Button color="green" disabled={disableForth} on:click={savePressed}
 				><FloppyDiskAltOutline /></Button
 			>
+		<Button on:click={deploy} color="purple">Deploy</Button>
+
 			<!-- {#if !disableForth}
 				<Button color="red"><CloseOutline /></Button>
 				<Button color="green"><FloppyDiskAltOutline /></Button>
 			{/if} -->
 		</ButtonGroup>
-
 		<!-- <Button
 			class="bg-gray-400 disabled:hover:bg-gray-400 dark:bg-gray-500 dark:disabled:hover:bg-gray-500"
 			disabled={disableBack}
@@ -112,7 +125,6 @@
 		<Button color="green"><FloppyDiskAltOutline /></Button> -->
 		<!-- outline outline-gray-600 dark:outline-gray-300 dark:hover:outline-gray-500 -->
 	</div>
-
 	<div
 		on:click={() => {
 			theme.set(localStorage.getItem('color-theme'));

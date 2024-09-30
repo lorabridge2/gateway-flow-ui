@@ -1,4 +1,4 @@
-FROM node:20-alpine AS build
+FROM node:20-bookworm-slim AS build
 
 WORKDIR /usr/src/app
 
@@ -12,7 +12,7 @@ COPY . .
 ENV NODE_ENV=production
 RUN npm run build
 
-FROM node:20-alpine
+FROM node:20-bookworm-slim
 
 WORKDIR /usr/src/app
 

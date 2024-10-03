@@ -19,7 +19,7 @@
 </div> -->
 
 <script lang="ts">
-	import { saveState } from '$lib/util';
+	import { handleClass, saveState } from '$lib/util';
 	import { type NodeProps, Handle, Position, useHandleConnections, useStore } from '@xyflow/svelte';
 	import {
 		Button,
@@ -67,7 +67,7 @@
 </script>
 
 <div>
-	<Handle type="target" position={targetPosition ?? Position.Top} {isConnectable}/>
+	<Handle type="target" position={targetPosition ?? Position.Top} {isConnectable} class={handleClass}/>
 	{data?.label}
 	<Hr hrClass="h-px my-1 bg-gray-200 border-0 dark:bg-gray-700" />
 	<div class="text-left text-[0.5rem]">
@@ -148,7 +148,7 @@
 </div> -->
 	<!-- </div> -->
 
-	<Handle type="source" position={sourcePosition ?? Position.Bottom} />
+	<Handle type="source" position={sourcePosition ?? Position.Bottom} class={handleClass}/>
 </div>
 
 <!-- <style>

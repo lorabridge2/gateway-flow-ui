@@ -2,7 +2,7 @@
 	import { type NodeProps, Handle, Position, useHandleConnections, useStore } from '@xyflow/svelte';
 	import { Hr } from 'flowbite-svelte';
 	import FloatInput from './FloatInput.svelte';
-	import { saveState } from '$lib/util';
+	import { handleClass, saveState } from '$lib/util';
 	import IntegerInput from './IntegerInput.svelte';
 
 	interface $$Props extends NodeProps {}
@@ -56,7 +56,7 @@
 </script>
 
 <div>
-	<Handle type="target" position={targetPosition ?? Position.Top} {isConnectable} />
+	<Handle type="target" position={targetPosition ?? Position.Top} {isConnectable} class={handleClass}/>
 	{data?.label}
 	<Hr hrClass="h-px my-1 bg-gray-200 border-0 dark:bg-gray-700" />
 	<div class="text-left text-[0.5rem]">
@@ -80,7 +80,7 @@
 		<!-- <IntegerInput class="mt-1" bind:count={data.min} {filter} {add} {sub}>Min Value</IntegerInput> -->
 		<!-- <IntegerInput class="mt-1" bind:count={data.max} {filter} {add} {sub}>Max Value</IntegerInput> -->
 	</div>
-	<Handle type="source" position={sourcePosition ?? Position.Bottom} />
+	<Handle type="source" position={sourcePosition ?? Position.Bottom} class={handleClass}/>
 </div>
 
 <style>

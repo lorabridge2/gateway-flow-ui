@@ -2,7 +2,7 @@
 	import { type NodeProps, Handle, Position, useStore } from '@xyflow/svelte';
 	import { Hr, Input } from 'flowbite-svelte';
 	import FloatInput from './FloatInput.svelte';
-	import { saveState } from '$lib/util';
+	import { handleClass, saveState } from '$lib/util';
 	import IntegerInput from './IntegerInput.svelte';
 	import TextInput from './TextInput.svelte';
 
@@ -57,7 +57,7 @@
 		<!-- <TextInput class="mt-1" bind:value={data.bool_true} on:change={()=>{saveState();}}>True Value</TextInput>
 		<TextInput class="mt-1" bind:value={data.bool_false} on:change={()=>{saveState();}}>False Value</TextInput> -->
 	</div>
-	<Handle type="source" position={sourcePosition ?? Position.Bottom} />
+	<Handle type="source" position={sourcePosition ?? Position.Bottom} class={handleClass}/>
 </div>
 
 <style>

@@ -44,3 +44,5 @@ export const saveState = async () => {
         });
     }
 };
+
+export let handleClass = "!w-3 !h-3 !border-2";

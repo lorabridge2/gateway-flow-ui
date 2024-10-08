@@ -5,7 +5,7 @@ WORKDIR /usr/src/app
 COPY package.json package-lock.json ./
 
 RUN npm install --force
-RUN npm audit fix --force
+#RUN npm audit fix --force
 
 COPY . .
 
@@ -22,6 +22,6 @@ ENV NODE_ENV=production
 
 RUN npm i --force
 # level
-RUN npm audit fix --force
+#RUN npm audit fix --force
 USER 1337:1337
 ENTRYPOINT [ "node", "/usr/src/app/index.js" ]

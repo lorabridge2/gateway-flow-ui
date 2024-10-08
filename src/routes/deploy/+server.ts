@@ -1,5 +1,5 @@
 import { createClient } from 'redis';
-import { redisConfig } from '$lib/config.js';
+import { redisConfig } from '$lib/config.server';
 
 
 export async function POST({ params, request }) {

@@ -54,7 +54,7 @@
 		syncDB.set(new PouchDB('synced'));
 		get(db)
 			.sync(
-				`http://${couchdb.username}:${couchdb.password}@${couchdb.host}:${couchdb.port}/${couchdb.db}`,
+				`http://${couchdb.username}:${couchdb.password}@${window.location.hostname}:${couchdb.port}/${couchdb.db}`,
 				{
 					style: 'main_only',
 					live: true,

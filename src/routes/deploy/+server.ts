@@ -1,10 +1,11 @@
 import { createClient } from 'redis';
-
+import { redisConfig } from '$lib/config.js';
 
 
 export async function POST({ params, request }) {
+    console.log(`redis://${redisConfig.host}:${redisConfig.port}`);
     const client = await createClient({
-        url: 'redis://127.0.0.1:6379'
+        url: `redis://${redisConfig.host}:${redisConfig.port}`
     })
         .on('error', err => console.log('Redis Client Error', err))
         .connect();

@@ -92,6 +92,14 @@
 
 		let syncDoc = await get(syncDB).get(id);
 		await get(syncDB).remove(syncDoc);
+
+		fetch('flow/delete', {
+			method: 'POST',
+			body: JSON.stringify({ payload: doc }),
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		});
 	};
 	const select = (event) => {
 		// active = true;

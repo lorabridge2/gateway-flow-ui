@@ -58,7 +58,18 @@
 
 	async function deploy() {
 		let doc = await get(db).get(get(activeTab));
-		fetch('deploy', {
+		fetch('flow/deploy', {
+			method: 'POST',
+			body: JSON.stringify({ payload: doc }),
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		});
+	}
+
+	async function disable() {
+		let doc = await get(db).get(get(activeTab));
+		fetch('flow/disable', {
 			method: 'POST',
 			body: JSON.stringify({ payload: doc }),
 			headers: {
@@ -82,7 +93,8 @@
 		<NavLi href="https://fh-crossd.github.io/">Docs</NavLi>
 		<NavLi href="https://crossd.tech">Project & Blog</NavLi>
 	</NavUl> -->
-	<div class="absolute left-[calc(50%-60px)]">
+	<!-- <div class="absolute left-[calc(50%-60px)]"> -->
+	<div>
 		<Label class="mx-auto flex w-fit">Action History</Label>
 		<ButtonGroup class="space-x-px"
 			><Button
@@ -101,13 +113,14 @@
 			<Button color="green" disabled={disableForth} on:click={savePressed}
 				><FloppyDiskAltOutline /></Button
 			>
-		<Button on:click={deploy} color="purple">Deploy</Button>
+		<!-- <Button on:click={deploy} color="purple">Deploy</Button> -->
 
 			<!-- {#if !disableForth}
 				<Button color="red"><CloseOutline /></Button>
 				<Button color="green"><FloppyDiskAltOutline /></Button>
 			{/if} -->
 		</ButtonGroup>
+		
 		<!-- <Button
 			class="bg-gray-400 disabled:hover:bg-gray-400 dark:bg-gray-500 dark:disabled:hover:bg-gray-500"
 			disabled={disableBack}
@@ -124,6 +137,13 @@
 		<Button color="red"><CloseOutline /></Button>
 		<Button color="green"><FloppyDiskAltOutline /></Button> -->
 		<!-- outline outline-gray-600 dark:outline-gray-300 dark:hover:outline-gray-500 -->
+	</div>
+	<div>
+		<Label class="mx-auto flex w-fit">Bridge Control</Label>
+	<ButtonGroup class="space-x-px">
+		<Button on:click={deploy} color="purple">Deploy changes</Button>
+		<Button on:click={disable} color="red" >Disable Flow</Button>
+		</ButtonGroup>
 	</div>
 	<div
 		on:click={() => {

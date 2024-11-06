@@ -183,7 +183,10 @@
 			})
 			.on('change', function (change) {
 				console.log('yolo');
-				fileDict[change.id].color = 'bg-green-400';
+				console.log(change);
+				if (change.id in fileDict) {
+					fileDict[change.id].color = 'bg-green-400';
+				}
 				// for (let i = 0; i < fileItems.length; i++) {
 				// 	if (fileItems[i].id === change.id) {
 				// 		if (change.rev === fileItems[i]._rev) {

@@ -378,4 +378,9 @@
 		display: flex;
 		flex-direction: column-reverse;
 	}
+	:global(g) {
+		:global(path) {
+			stroke-width: 3px !important;
+		}
+	}
 </style>

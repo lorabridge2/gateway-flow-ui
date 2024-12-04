@@ -35,7 +35,7 @@
 
 <div {...$$restProps}>
 	<div class="flex">
-		<Label class="mr-2 w-24 text-nowrap text-[0.5rem]"><slot /></Label>
+		<Label class="mr-2 min-w-12 text-nowrap text-[0.5rem]"><slot /></Label>
 		<ButtonGroup class="h-1 w-full">
 			<Button
 				class="z-10 h-3 w-1 !border-[#D1D5DB] px-2 py-0 text-[0.25rem] dark:!border-[#4B5563]"

@@ -44,7 +44,8 @@
 		binarydevice: BinaryDevice,
 		logicand: LogicAnd,
 		logicor: LogicOr,
-		alert: Alert
+		alert: Alert,
+		valuefilter: ValueFilter,
 	};
 	let offsetX;
 	let offsetY;
@@ -300,6 +301,7 @@
 	import FlowContextMenu from './FlowContextMenu.svelte';
 	import LogicAnd from './LogicAnd.svelte';
 	import LogicOr from './LogicOr.svelte';
+	import ValueFilter from './ValueFilter.svelte';
 	import Alert from './Alert.svelte';
 	const { nodesDraggable, nodesConnectable, elementsSelectable } = useStore();
 	$: disabled = !($nodesDraggable || $nodesConnectable || $elementsSelectable);

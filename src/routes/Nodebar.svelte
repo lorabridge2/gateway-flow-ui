@@ -103,7 +103,14 @@
 					on:dragstart={(event) => onDragStart(event, 'alert')}
 					draggable={true}
 				>
-					<P>~~Alert~~</P>
+					<P>Notification</P>
+				</div>
+				<div
+					class="default-node node border-2"
+					on:dragstart={(event) => onDragStart(event, 'valuefilter')}
+					draggable={true}
+				>
+					<P>Value filter</P>
 				</div>
 			</SidebarDropdownWrapper>
 			<SidebarDropdownWrapper label="Output" isOpen>

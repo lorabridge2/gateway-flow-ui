@@ -1,0 +1,43 @@
+<script lang="ts">
+	import { ButtonGroup, Label, Input, Select } from 'flowbite-svelte';
+	export let value = '';
+	export let filter: Function = undefined;
+	export let placeholder = '';
+	export let disabled = false;
+	export let compareMethod;
+
+	// if count is directly bound to the input field, every change will be passed to the parent component twice.
+	// The value that was entered and the reactive block calling the filter method.
+	// in this case the bound parent value in e.g. the Hysteresis will try to call saveState twice
+
+	// let val = value;
+	// $: {
+	// 	console.log("TextInput");
+	// 	// count = parseInt(count.toString().replace(/[^0-9]*/, ''));
+	// 	if (filter) {
+	// 		value = filter(value) || '';
+	// 	} 
+	// }
+</script>
+
+<div {...$$restProps}>
+	<div class="flex">
+		<Label class="mr-2 min-w-12 break-words text-[0.5rem]"><slot /></Label>
+		<Select class="h-3 w-30	 px-1 py-0 text-[0.5rem] leading-[0.5rem] focus:!border-[#D1D5DB] focus:!ring-0 focus:dark:!border-[#4B5563]" items={compareMethod} bind:value/>
+
+		<!-- <ButtonGroup class="h-1 w-full">
+			<Input
+				let:props
+				class="h-3 w-20 px-1 py-0 text-[0.5rem] focus:!border-[#D1D5DB] focus:!ring-0 focus:dark:!border-[#4B5563]"
+			>
+				<input type="text" {...props} bind:value {placeholder} on:change {disabled} />
+			</Input>
+		</ButtonGroup> -->
+	</div>
+</div>
+
+<style>
+	:global(option) {
+		font-size: 1rem;
+	}
+</style>

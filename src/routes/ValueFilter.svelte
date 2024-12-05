@@ -29,6 +29,7 @@
 
 	let compareMethod = [
 		{ value: 'eq', name: 'equal' },
+		{ value: 'neq', name: 'not equal' },
 		{ value: 'lt', name: 'lower' },
 		{ value: 'lte', name: 'lower or equal' },
 		{ value: 'gt', name: 'greater' },

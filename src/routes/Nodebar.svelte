@@ -33,6 +33,13 @@
 				>
 					<P>Sensor</P>
 				</div>
+				<div
+					class="default-node node border-2"
+					on:dragstart={(event) => onDragStart(event, 'timer')}
+					draggable={true}
+				>
+					<P>Timer switch</P>
+				</div>
 				<!-- <div
 					class="input-node node border-2"
 					on:dragstart={(event) => onDragStart(event, 'numericsensor')}
@@ -64,13 +71,6 @@
 					<P>Logic or</P>
 				</div>
 				<div
-					class="default-node node border-2"
-					on:dragstart={(event) => onDragStart(event, 'timer')}
-					draggable={true}
-				>
-					<P>Timer switch</P>
-				</div>
-				<div
 					class="default-node node relative border-2 !pr-7"
 					on:dragstart={(event) => onDragStart(event, 'hysteresis')}
 					draggable={true}
@@ -100,13 +100,6 @@
 				</div>
 				<div
 					class="default-node node border-2"
-					on:dragstart={(event) => onDragStart(event, 'alert')}
-					draggable={true}
-				>
-					<P>Notification</P>
-				</div>
-				<div
-					class="default-node node border-2"
 					on:dragstart={(event) => onDragStart(event, 'valuefilter')}
 					draggable={true}
 				>
@@ -120,6 +113,13 @@
 					draggable={true}
 				>
 					<P>Output device</P>
+				</div>
+				<div
+					class="default-node node border-2"
+					on:dragstart={(event) => onDragStart(event, 'alert')}
+					draggable={true}
+				>
+					<P>Notification</P>
 				</div>
 			</SidebarDropdownWrapper>
 			<!-- <SidebarDropdownWrapper label="Function" isOpen>

@@ -40,20 +40,6 @@
 				>
 					<P>Timer switch</P>
 				</div>
-				<!-- <div
-					class="input-node node border-2"
-					on:dragstart={(event) => onDragStart(event, 'numericsensor')}
-					draggable={true}
-				>
-					<P>Numeric sensor</P>
-				</div> -->
-				<!-- <div
-					class="input-node node border-2"
-					on:dragstart={(event) => onDragStart(event, 'input')}
-					draggable={true}
-				>
-					<P>Binary sensorBinary sensorBinary sensorBinary sensorBinary sensorBinary sensor</P>
-				</div> -->
 			</SidebarDropdownWrapper>
 			<SidebarDropdownWrapper label="Function" isOpen>
 				<div
@@ -122,94 +108,6 @@
 					<P>Notification</P>
 				</div>
 			</SidebarDropdownWrapper>
-			<!-- <SidebarDropdownWrapper label="Function" isOpen>
-				<div
-					class="default-node node border-2"
-					on:dragstart={(event) => onDragStart(event, 'default')}
-					draggable={true}
-				>
-					<P>Logic and</P>
-				</div>
-				<div
-					class="default-node node border-2"
-					on:dragstart={(event) => onDragStart(event, 'default')}
-					draggable={true}
-				>
-					<P>Logic or</P>
-				</div>
-				<div
-					class="default-node node border-2"
-					on:dragstart={(event) => onDragStart(event, 'default')}
-					draggable={true}
-				>
-					<P>Timer switch</P>
-				</div>
-				<div
-					class="default-node node border-2"
-					on:dragstart={(event) => onDragStart(event, 'default')}
-					draggable={true}
-				>
-					<P>Hysteresis</P>
-				</div>
-				<div
-					class="default-node node border-2"
-					on:dragstart={(event) => onDragStart(event, 'default')}
-					draggable={true}
-				>
-					<P>Countdown switch</P>
-				</div>
-				<div
-					class="default-node node border-2"
-					on:dragstart={(event) => onDragStart(event, 'default')}
-					draggable={true}
-				>
-					<P>Alert</P>
-				</div>
-			</SidebarDropdownWrapper>
-            <SidebarDropdownWrapper label="Function" isOpen>
-				<div
-					class="default-node node border-2"
-					on:dragstart={(event) => onDragStart(event, 'default')}
-					draggable={true}
-				>
-					<P>Logic and</P>
-				</div>
-				<div
-					class="default-node node border-2"
-					on:dragstart={(event) => onDragStart(event, 'default')}
-					draggable={true}
-				>
-					<P>Logic or</P>
-				</div>
-				<div
-					class="default-node node border-2"
-					on:dragstart={(event) => onDragStart(event, 'default')}
-					draggable={true}
-				>
-					<P>Timer switch</P>
-				</div>
-				<div
-					class="default-node node border-2"
-					on:dragstart={(event) => onDragStart(event, 'default')}
-					draggable={true}
-				>
-					<P>Hysteresis</P>
-				</div>
-				<div
-					class="default-node node border-2"
-					on:dragstart={(event) => onDragStart(event, 'default')}
-					draggable={true}
-				>
-					<P>Countdown switch</P>
-				</div>
-				<div
-					class="default-node node border-2"
-					on:dragstart={(event) => onDragStart(event, 'default')}
-					draggable={true}
-				>
-					<P>Alert</P>
-				</div>
-			</SidebarDropdownWrapper> -->
 		</SidebarGroup>
 	</SidebarWrapper>
 </Sidebar>

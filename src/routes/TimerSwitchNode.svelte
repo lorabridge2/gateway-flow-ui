@@ -67,7 +67,7 @@
 </script>
 
 <div>
-	<Handle type="target" position={targetPosition ?? Position.Top} {isConnectable} class={handleClass}/>
+	<!-- <Handle type="target" position={targetPosition ?? Position.Top} {isConnectable} class={handleClass}/> -->
 	{data?.label}
 	<Hr hrClass="h-px my-1 bg-gray-200 border-0 dark:bg-gray-700" />
 	<div class="text-left text-[0.5rem]">

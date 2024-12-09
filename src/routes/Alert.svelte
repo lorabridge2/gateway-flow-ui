@@ -63,7 +63,7 @@
 			}}>Max Value</FloatInput
 		> -->
 	</div>
-	<Handle type="source" position={sourcePosition ?? Position.Bottom} class={handleClass} />
+	<!-- <Handle type="source" position={sourcePosition ?? Position.Bottom} class={handleClass} /> -->
 </div>
 
 <style>

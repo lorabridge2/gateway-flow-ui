@@ -23,7 +23,7 @@
 <div {...$$restProps}>
 	<div class="flex">
 		<Label class="mr-2 min-w-12 break-words text-[0.5rem]"><slot /></Label>
-		<Select class="h-3 w-30	 px-1 py-0 text-[0.5rem] leading-[0.5rem] focus:!border-[#D1D5DB] focus:!ring-0 focus:dark:!border-[#4B5563]" items={compareMethod} bind:value/>
+		<Select class="h-3 min-w-30 px-1 py-0 text-[0.5rem] leading-[0.5rem] focus:!border-[#D1D5DB] focus:!ring-0 focus:dark:!border-[#4B5563]" items={compareMethod} bind:value/>
 
 		<!-- <ButtonGroup class="h-1 w-full">
 			<Input

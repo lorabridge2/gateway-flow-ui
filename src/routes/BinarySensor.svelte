@@ -106,7 +106,8 @@
 	:global(.svelte-flow__node-binarysensor) {
 		padding: 10px;
 		border-radius: 3px;
-		width: 250px;
+		width: fit-content;
+		min-width: 150px;
 		font-size: 0.75rem;
 		color: var(--xy-node-color-default);
 		text-align: center;

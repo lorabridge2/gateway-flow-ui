@@ -5,6 +5,35 @@
 	import { onMount } from 'svelte';
 	import Nodebar from './Nodebar.svelte';
 	import Filebar from './Filebar.svelte';
+	import { source } from 'sveltekit-sse';
+	import { deviceStore } from '$lib/util';
+
+	let devices: any;
+	onMount(async () => {
+		console.log('sakdjasdkl');
+		const response = await fetch('/devices', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		});
+		devices = await response.json();
+		console.log(devices);
+		deviceStore.set(devices);
+		const value = source('/devices/sse').select('message');
+		value.subscribe((message: string) => {
+			// Update the reactive variable
+			if (message) {
+				console.log(message);
+				let dev = JSON.parse(message);
+				if (!(dev['lb_id'] in devices)) {
+					deviceStore.set(devices);
+					devices[dev['lb_id']] = dev;
+				}
+				console.log(devices);
+			}
+		});
+	});
 </script>
 
 <div class="flex">

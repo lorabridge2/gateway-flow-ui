@@ -1,7 +1,6 @@
 import { createClient } from 'redis';
 import { redisConfig } from '$lib/config.server';
 
-
 export async function pushFlowTask(task) {
     console.log(`redis://${redisConfig.host}:${redisConfig.port}`);
     const client = await createClient({
@@ -14,3 +13,5 @@ export async function pushFlowTask(task) {
     await client.lPush("lorabridge:flowman:flow-queue", JSON.stringify(task));
     await client.quit();
 }
+
+export const sseClients:any = [];

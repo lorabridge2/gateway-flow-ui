@@ -1,19 +1,26 @@
 import { env } from '$env/dynamic/private';
 // import { dev } from '$app/environment';
 import { redisConfig } from '$lib/config.server';
-import { Level } from "level";
+// import { Level } from "level";
 import { createClient, type RedisClientOptions, type RedisClientType } from 'redis';
 import { sseClients } from '$lib/util.server';
-export const db = new Level<string, any>(env.DBPath ?? './db', { valueEncoding: 'json' });
+import { building } from '$app/environment';
+// export const db = new Level<string, any>(env.DBPath ?? './db', { valueEncoding: 'json' });
 
-export const client: RedisClientType = await createClient({
+export const client: RedisClientType = createClient({
     url: `redis://${redisConfig.host}:${redisConfig.port}`
 })
-    .on('error', err => console.log('Redis Client Error', err))
-    .connect();
+    .on('error', err => console.log('Redis Client Error', err));
+
+if (!building) {
+    await client.connect();
+}
 const rPrefix = "lorabridge:devman";
 const rSep = ":";
 async function getDevices() {
+    if (building) {
+        return [];
+    }
     let devices: any = {};
     let lbIDToIeeeMapping = await client.hGetAll([rPrefix, "index:lb"].join(rSep));
     for (const [key, value] of Object.entries(lbIDToIeeeMapping)) {
@@ -25,21 +32,24 @@ async function getDevices() {
 };
 export const devices = await getDevices();
 
-export const subscriber = await client.duplicate()
-    .on('error', err => console.error(err)).
-    connect();
+export const subscriber = client.duplicate()
+    .on('error', err => console.error(err));
 
-const listener = (message, channel) => {
-    console.log("pubsub");
-    console.log(message);
-    for (let i = 0; i < sseClients.length; i++) {
+if (!building) {
+    subscriber.connect();
+
+    const listener = (message, channel) => {
         console.log("pubsub");
         console.log(message);
-        let dev = JSON.parse(message);
-        if (!(dev["lb_id"] in devices)) {
-            devices[dev["lb_id"]] = dev;
+        for (let i = 0; i < sseClients.length; i++) {
+            console.log("pubsub");
+            console.log(message);
+            let dev = JSON.parse(message);
+            if (!(dev["lb_id"] in devices)) {
+                devices[dev["lb_id"]] = dev;
+            }
+            sseClients[i]("message", message);
         }
-        sseClients[i]("message", message);
-    }
-};
-await subscriber.subscribe('lorabridge:devman:device:notification', listener);
+    };
+    await subscriber.subscribe('lorabridge:devman:device:notification', listener);
+}

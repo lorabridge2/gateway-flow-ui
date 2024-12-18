@@ -1,5 +1,12 @@
 <script lang="ts">
-	import { type NodeProps, Handle, Position, useHandleConnections, useStore } from '@xyflow/svelte';
+	import {
+		type NodeProps,
+		Handle,
+		Position,
+		useHandleConnections,
+		useStore,
+		type PanelPosition
+	} from '@xyflow/svelte';
 	import { Hr } from 'flowbite-svelte';
 	import FloatInput from './FloatInput.svelte';
 	import { handleClass, saveState } from '$lib/util';
@@ -22,7 +29,20 @@
 </script>
 
 <div>
-	<Handle type="target" position={targetPosition ?? Position.Top} class={handleClass}/>
+	<Handle
+		id={id + '-1'}
+		type="target"
+		position={Position.Left}
+		style="top:30%"
+		class={handleClass}
+	/>
+	<Handle
+		id={id + '-2'}
+		type="target"
+		position={Position.Left}
+		style="top:70%"
+		class={handleClass}
+	/>
 	{data?.label}
 	<!-- <Hr hrClass="h-px my-1 bg-gray-200 border-0 dark:bg-gray-700" />
 	<div class="text-left text-[0.5rem]">
@@ -44,7 +64,7 @@
 			}}>Max Value</FloatInput
 		>
 	</div> -->
-	<Handle type="source" position={sourcePosition ?? Position.Bottom} class={handleClass}/>
+	<Handle type="source" position={sourcePosition ?? Position.Right} class={handleClass} />
 </div>
 
 <style>

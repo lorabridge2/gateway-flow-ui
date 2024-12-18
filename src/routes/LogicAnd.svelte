@@ -30,14 +30,14 @@
 
 <div>
 	<Handle
-		id={id + '-1'}
+		id={id + '-0'}
 		type="target"
 		position={Position.Left}
 		style="top:30%"
 		class={handleClass}
 	/>
 	<Handle
-		id={id + '-2'}
+		id={id + '-1'}
 		type="target"
 		position={Position.Left}
 		style="top:70%"

@@ -15,3 +15,4 @@ export async function pushFlowTask(task) {
 }
 
 export const sseClients:any = [];
+export const sseMsgsClients: any = [];

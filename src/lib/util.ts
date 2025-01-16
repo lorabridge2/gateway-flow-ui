@@ -26,6 +26,7 @@ export let cancel = writable(0);
 export let save = writable(0);
 
 export let deviceStore = writable({});
+export let messageStore = writable({});
 
 export let renameItem = writable();
 export let delItem = writable();

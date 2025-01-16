@@ -1,18 +1,50 @@
 <script>
 	import '../app.css';
-	import { theme, back, forth, showBack, showForth, cancel, save, activeTab, db } from '$lib/util';
-	import { Navbar, NavBrand, DarkMode, NavUl, NavLi, Button, ButtonGroup, Label, P } from 'flowbite-svelte';
+	import {
+		theme,
+		back,
+		forth,
+		showBack,
+		showForth,
+		cancel,
+		save,
+		activeTab,
+		db,
+		messageStore
+	} from '$lib/util';
+	import {
+		Navbar,
+		NavBrand,
+		DarkMode,
+		NavUl,
+		NavLi,
+		Button,
+		ButtonGroup,
+		Label,
+		P,
+		Drawer,
+		CloseButton,
+		Hr
+	} from 'flowbite-svelte';
 	import {
 		CaretLeftSolid,
 		CaretRightSolid,
 		CloseOutline,
+		EnvelopeSolid,
 		FloppyDiskAltOutline,
-		FloppyDiskOutline
+		FloppyDiskOutline,
+		InfoCircleSolid
 	} from 'flowbite-svelte-icons';
 	// import logo from '$lib/assets/logo.webp';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 	import { get } from 'svelte/store';
+	import { sineIn } from 'svelte/easing';
+	import MessageItem from './MessageItem.svelte';
+	import { source } from 'sveltekit-sse';
+
+	// let messages = [];
+	// messageStore.set(messages);
 
 	let disableBack = false;
 	showBack.subscribe((show) => {
@@ -24,11 +56,40 @@
 	});
 
 	const btnClass =
-		'text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-lg p-2.5 z-50';
+		'text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-lg z-50 p-2.5';
 	// const btnClass =
 	// 'text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-lg p-2.5 fixed right-2 top-12  md:top-3 md:right-2 z-50';
 	onMount(() => {
 		theme.set(localStorage.getItem('color-theme') ?? 'light');
+	});
+	onMount(async () => {
+		const response = await fetch('/events', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		});
+		// messages = await response.json();
+		messageStore.set(await response.json());
+		console.log(get(messageStore));
+		const value = source('/events/sse').select('message');
+		value.subscribe((message) => {
+			console.log("update message")
+			// not triggered on same message 
+			// Update the reactive variable
+			if (message) {
+				console.log(message);
+				let msg = JSON.parse(message);
+				// messages.push(msg);
+				messageStore.set([...get(messageStore), msg]);
+				console.log(get(messageStore));
+				// if (!(dev['lb_id'] in devices)) {
+				// 	// deviceStore.set(devices);
+				// 	devices[dev['lb_id']] = dev;
+				// }
+				// console.log(messages);
+			}
+		});
 	});
 	const keypress = (event) => {
 		if (event.ctrlKey) {
@@ -56,6 +117,17 @@
 		save.update((val) => val + 1);
 	};
 
+	const clearAll=()=>{
+		fetch('events/delete/all', {
+			method: 'POST',
+			body: JSON.stringify({}),
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		});
+		messageStore.set([]);
+	};
+
 	async function deploy() {
 		let doc = await get(db).get(get(activeTab));
 		fetch('flow/deploy', {
@@ -77,11 +149,18 @@
 			}
 		});
 	}
+
+	let hidden6 = true;
+	let transitionParamsRight = {
+		x: 320,
+		duration: 200,
+		easing: sineIn
+	};
 </script>
 
 <svelte:window on:keydown={keypress} />
 
-<Navbar let:hidden let:toggle class="bg-gray-100">
+<Navbar let:hidden let:toggle class="bg-gray-100" fluid={true}>
 	<NavBrand href="/">
 		<span class="heading self-center whitespace-nowrap text-4xl font-semibold dark:text-white">
 			Lo<span>Ra</span>Mation
@@ -113,46 +192,69 @@
 			<Button color="green" disabled={disableForth} on:click={savePressed}
 				><FloppyDiskAltOutline /></Button
 			>
-		<!-- <Button on:click={deploy} color="purple">Deploy</Button> -->
-
-			<!-- {#if !disableForth}
-				<Button color="red"><CloseOutline /></Button>
-				<Button color="green"><FloppyDiskAltOutline /></Button>
-			{/if} -->
 		</ButtonGroup>
-		
-		<!-- <Button
-			class="bg-gray-400 disabled:hover:bg-gray-400 dark:bg-gray-500 dark:disabled:hover:bg-gray-500"
-			disabled={disableBack}
-			color="dark"
-			on:click={backPressed}><CaretLeftSolid /></Button
-		>
-		<Button
-			class="bg-gray-400 disabled:hover:bg-gray-400 dark:bg-gray-500 dark:disabled:hover:bg-gray-500"
-			color="dark"
-			disabled={disableForth}
-			on:click={forthPressed}><CaretRightSolid /></Button
-		>
-		
-		<Button color="red"><CloseOutline /></Button>
-		<Button color="green"><FloppyDiskAltOutline /></Button> -->
-		<!-- outline outline-gray-600 dark:outline-gray-300 dark:hover:outline-gray-500 -->
 	</div>
 	<div>
 		<Label class="mx-auto flex w-fit">Bridge Control</Label>
-	<ButtonGroup class="space-x-px">
-		<Button on:click={deploy} color="purple">Deploy changes</Button>
-		<Button on:click={disable} color="red" >Disable Flow</Button>
+		<ButtonGroup class="space-x-px">
+			<Button on:click={deploy} color="purple">Deploy changes</Button>
+			<Button on:click={disable} color="red">Disable Flow</Button>
 		</ButtonGroup>
 	</div>
-	<div
-		on:click={() => {
-			theme.set(localStorage.getItem('color-theme'));
-		}}
-	>
-		<DarkMode {btnClass} />
+	<!-- svelte-ignore a11y_click_events_have_key_events -->
+	<!-- svelte-ignore a11y_no_static_element_interactions -->
+	<div class="flex">
+		<div
+			class="my-auto w-fit"
+			on:click={() => {
+				theme.set(localStorage.getItem('color-theme'));
+			}}
+		>
+			<DarkMode {btnClass} />
+			<!-- <Button class="!min-h-full">Status</Button> -->
+			<!-- <div class="!min-h-[8rem] inline-block ml-2 w-36 !p-0 !m-0 mr-[-0.5rem] sm:mr-[-1rem] dark:hover:bg-gray-700 hover:bg-gray-200 bg-gray-100 dark:bg-gray-800">Status</div>
+	</div> -->
+		</div>
+		<Button
+			class="ml-2 inline-block h-14"
+			color="dark"
+			outline
+			on:click={() => (hidden6 = !hidden6)}>Status</Button
+		>
 	</div>
 </Navbar>
+
+<Drawer
+	activateClickOutside={false}
+	width="w-2/5"
+	placement="right"
+	transitionType="fly"
+	transitionParams={transitionParamsRight}
+	bind:hidden={hidden6}
+	backdrop={true}
+	id="sidebar6"
+>
+	<div class="flex items-center">
+		<h5
+			id="drawer-label"
+			class="mb-4 inline-flex items-center text-base font-semibold text-gray-500 dark:text-gray-400"
+		>
+			<EnvelopeSolid class="me-2.5 h-5 w-5" />Status Messages
+		</h5>
+		<Button class="ml-auto" outline color="red" on:click={clearAll}>Clear all</Button>
+		<CloseButton on:click={() => (hidden6 = true)} class="mb-4 dark:text-white" />
+	</div>
+	<Hr hrClass="my-5" class="!my-0" />
+	<div class="space-y-2">
+		{#each $messageStore as msg}
+			<MessageItem name={msg.msg} id={msg.id} type={msg.type} timestamp={msg.timestamp} />
+		{:else}
+			<P>There are currently no messages.</P>
+		{/each}
+
+		<!-- <MessageItem name="test2" id="12" type="user"/> -->
+	</div>
+</Drawer>
 
 <slot />
 
@@ -199,11 +301,11 @@
 		font-family: ubuntu;
 		src: url('/ubuntu.regular.ttf');
 	}
-	@font-face{
+	@font-face {
 		font-family: ubuntu-mono;
 		src: url('/ubuntu.mono.ttf');
 	}
-	@font-face{
+	@font-face {
 		font-family: ubuntu-mono-bold;
 		src: url('/ubuntu.mono-bold.ttf');
 	}
@@ -235,7 +337,7 @@
 		font-family: relish-gargler;
 		src: url('/relish-gargler.regular.otf');
 	}
-	
+
 	.heading {
 		font-family: 'KogniGear';
 		color: #7a04eb;

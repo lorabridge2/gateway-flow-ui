@@ -30,6 +30,7 @@
 		"flowbite-svelte-icons": "^2.0.2",
 		"globals": "^15.12.0",
 		"leetify": "^2.0.2",
+		"luxon": "^3.5.0",
 		"nanoid": "^5.0.8",
 		"postcss": "^8.4.49",
 		"pouchdb": "^9.0.0",

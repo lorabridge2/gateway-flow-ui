@@ -27,8 +27,8 @@
 				console.log(message);
 				let dev = JSON.parse(message);
 				if (!(dev['lb_id'] in devices)) {
-					deviceStore.set(devices);
 					devices[dev['lb_id']] = dev;
+					deviceStore.set(devices);
 				}
 				console.log(devices);
 			}

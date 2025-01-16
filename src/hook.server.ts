@@ -78,7 +78,7 @@ async function getUserMessages() {
 console.log("messsages");
 export let systemMessages = await getSystemMessages();
 export let userMessages = await getUserMessages();
-export let mergedMessages = [...systemMessages, ...userMessages].sort((a, b) => parseFloat(a.timestamp) - parseFloat(b.timestamp))
+export let mergedMessages = [...systemMessages, ...userMessages].sort((a, b) => parseFloat(b.timestamp) - parseFloat(a.timestamp) )
 
 export const reloadMessages = async () => {
     systemMessages = await getSystemMessages();
@@ -125,7 +125,7 @@ if (!building) {
             let msg = await client.hGetAll([rEventsPrefix, "system", newMsgs[index]].join(rSep));
             msg.type = "system";
             systemMessages.push(msg);
-            mergedMessages.push(msg);
+            mergedMessages.unshift(msg);
             for (let i = 0; i < sseMsgsClients.length; i++) {
                 sseMsgsClients[i]("message", JSON.stringify(msg));
                 console.log("message");
@@ -152,7 +152,7 @@ if (!building) {
             let msg = await client.hGetAll([rEventsPrefix, "user", newMsgs[index]].join(rSep));
             msg.type = "user";
             userMessages.push(msg);
-            mergedMessages.push(msg);
+            mergedMessages.ushift(msg);
             for (let i = 0; i < sseMsgsClients.length; i++) {
                 sseMsgsClients[i]("message", JSON.stringify(msg))
             }

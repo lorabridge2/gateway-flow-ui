@@ -81,7 +81,7 @@
 				console.log(message);
 				let msg = JSON.parse(message);
 				// messages.push(msg);
-				messageStore.set([...get(messageStore), msg]);
+				messageStore.set([msg, ...get(messageStore)]);
 				console.log(get(messageStore));
 				// if (!(dev['lb_id'] in devices)) {
 				// 	// deviceStore.set(devices);

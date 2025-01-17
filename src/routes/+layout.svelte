@@ -24,12 +24,16 @@
 		P,
 		Drawer,
 		CloseButton,
-		Hr
+		Hr,
+		Dropdown,
+		Toggle,
+		Span
 	} from 'flowbite-svelte';
 	import {
 		CaretLeftSolid,
 		CaretRightSolid,
 		CloseOutline,
+		CogSolid,
 		EnvelopeSolid,
 		FloppyDiskAltOutline,
 		FloppyDiskOutline,
@@ -60,7 +64,19 @@
 	// const btnClass =
 	// 'text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-lg p-2.5 fixed right-2 top-12  md:top-3 md:right-2 z-50';
 	onMount(() => {
+		if ('color-theme' in localStorage) {
+			// explicit preference - overrides author's choice
+			localStorage.getItem('color-theme') === 'dark'
+				? window.document.documentElement.classList.add('dark')
+				: window.document.documentElement.classList.remove('dark');
+		} else {
+			// browser preference - does not overrides
+			if (window.matchMedia('(prefers-color-scheme: dark)').matches)
+				window.document.documentElement.classList.add('dark');
+		}
 		theme.set(localStorage.getItem('color-theme') ?? 'light');
+		futureFont=localStorage.getItem("futuristic-font");
+		animatedHeading=localStorage.getItem("animated-heading");
 	});
 	onMount(async () => {
 		const response = await fetch('/events', {
@@ -74,8 +90,8 @@
 		console.log(get(messageStore));
 		const value = source('/events/sse').select('message');
 		value.subscribe((message) => {
-			console.log("update message")
-			// not triggered on same message 
+			console.log('update message');
+			// not triggered on same message
 			// Update the reactive variable
 			if (message) {
 				console.log(message);
@@ -117,7 +133,7 @@
 		save.update((val) => val + 1);
 	};
 
-	const clearAll=()=>{
+	const clearAll = () => {
 		fetch('events/delete/all', {
 			method: 'POST',
 			body: JSON.stringify({}),
@@ -156,107 +172,171 @@
 		duration: 200,
 		easing: sineIn
 	};
+
+	let checked;
+
+	function toggleMode() {
+		document.documentElement.classList.toggle('dark');
+		localStorage.setItem(
+			'color-theme',
+			localStorage.getItem('color-theme') == 'light' ? 'dark' : 'light'
+		);
+		theme.set(localStorage.getItem('color-theme'));
+	}
+
+	function toggleFont() {
+		if (localStorage.getItem('futuristic-font')) {
+			localStorage.removeItem('futuristic-font');
+			futureFont = null;
+		} else {
+			localStorage.setItem('futuristic-font', 'ubuntu');
+			futureFont = 'ubuntu';
+		}
+	}
+	let futureFont = null;
+
+	function toggleAnimation() {
+		if (localStorage.getItem('animated-heading')) {
+			localStorage.removeItem('animated-heading');
+			animatedHeading = null;
+		} else {
+			localStorage.setItem('animated-heading', 'inanimate');
+			animatedHeading = 'inanimate';
+		}
+	}
+	let animatedHeading = null;
 </script>
 
 <svelte:window on:keydown={keypress} />
-
-<Navbar let:hidden let:toggle class="bg-gray-100" fluid={true}>
-	<NavBrand href="/">
-		<span class="heading self-center whitespace-nowrap text-4xl font-semibold dark:text-white">
-			Lo<span>Ra</span>Mation
-		</span>
-	</NavBrand>
-	<!-- <NavUl class="ml-auto">
+<main class={!futureFont ? 'future-font' : 'normal-font'}>
+	<Navbar let:hidden let:toggle class="bg-gray-100" fluid={true}>
+		<NavBrand href="/">
+			<span class="heading self-center whitespace-nowrap text-4xl font-semibold dark:text-white">
+				Lo<span class={!animatedHeading ? 'anim' : ''}>Ra</span>Mation
+			</span>
+		</NavBrand>
+		<!-- <NavUl class="ml-auto">
 		<NavLi href="/">Search</NavLi>
 		<NavLi href="/doc">Metrics</NavLi>
 		<NavLi href="https://fh-crossd.github.io/">Docs</NavLi>
 		<NavLi href="https://crossd.tech">Project & Blog</NavLi>
 	</NavUl> -->
-	<!-- <div class="absolute left-[calc(50%-60px)]"> -->
-	<div>
-		<Label class="mx-auto flex w-fit">Action History</Label>
-		<ButtonGroup class="space-x-px"
-			><Button
-				class="bg-gray-400 disabled:hover:bg-gray-400 dark:bg-gray-500 dark:disabled:hover:bg-gray-500"
-				disabled={disableBack}
-				color="dark"
-				on:click={backPressed}><CaretLeftSolid /></Button
-			>
-			<Button
-				class="bg-gray-400 disabled:hover:bg-gray-400 dark:bg-gray-500 dark:disabled:hover:bg-gray-500"
-				color="dark"
-				disabled={disableForth}
-				on:click={forthPressed}><CaretRightSolid /></Button
-			>
-			<Button color="red" disabled={disableForth} on:click={cancelPressed}><CloseOutline /></Button>
-			<Button color="green" disabled={disableForth} on:click={savePressed}
-				><FloppyDiskAltOutline /></Button
-			>
-		</ButtonGroup>
-	</div>
-	<div>
-		<Label class="mx-auto flex w-fit">Bridge Control</Label>
-		<ButtonGroup class="space-x-px">
-			<Button on:click={deploy} color="purple">Deploy changes</Button>
-			<Button on:click={disable} color="red">Disable Flow</Button>
-		</ButtonGroup>
-	</div>
-	<!-- svelte-ignore a11y_click_events_have_key_events -->
-	<!-- svelte-ignore a11y_no_static_element_interactions -->
-	<div class="flex">
-		<div
-			class="my-auto w-fit"
-			on:click={() => {
-				theme.set(localStorage.getItem('color-theme'));
-			}}
-		>
-			<DarkMode {btnClass} />
-			<!-- <Button class="!min-h-full">Status</Button> -->
-			<!-- <div class="!min-h-[8rem] inline-block ml-2 w-36 !p-0 !m-0 mr-[-0.5rem] sm:mr-[-1rem] dark:hover:bg-gray-700 hover:bg-gray-200 bg-gray-100 dark:bg-gray-800">Status</div>
-	</div> -->
+		<!-- <div class="absolute left-[calc(50%-60px)]"> -->
+		<div>
+			<Label class="mx-auto flex w-fit">Action History</Label>
+			<ButtonGroup class="space-x-px"
+				><Button
+					class="bg-gray-400 disabled:hover:bg-gray-400 dark:bg-gray-500 dark:disabled:hover:bg-gray-500"
+					disabled={disableBack}
+					color="dark"
+					on:click={backPressed}><CaretLeftSolid /></Button
+				>
+				<Button
+					class="bg-gray-400 disabled:hover:bg-gray-400 dark:bg-gray-500 dark:disabled:hover:bg-gray-500"
+					color="dark"
+					disabled={disableForth}
+					on:click={forthPressed}><CaretRightSolid /></Button
+				>
+				<Button color="red" disabled={disableForth} on:click={cancelPressed}
+					><CloseOutline /></Button
+				>
+				<Button color="green" disabled={disableForth} on:click={savePressed}
+					><FloppyDiskAltOutline /></Button
+				>
+			</ButtonGroup>
 		</div>
-		<Button
-			class="ml-2 inline-block h-14"
-			color="dark"
-			outline
-			on:click={() => (hidden6 = !hidden6)}>Status</Button
-		>
-	</div>
-</Navbar>
+		<div>
+			<Label class="mx-auto flex w-fit">Bridge Control</Label>
+			<ButtonGroup class="space-x-px">
+				<Button on:click={deploy} color="purple">Deploy changes</Button>
+				<Button on:click={disable} color="red">Disable Flow</Button>
+			</ButtonGroup>
+		</div>
+		<!-- svelte-ignore a11y_click_events_have_key_events -->
+		<!-- svelte-ignore a11y_no_static_element_interactions -->
+		<div class="flex">
+			<div
+				class="my-auto w-fit"
+				on:click={() => {
+					theme.set(localStorage.getItem('color-theme'));
+				}}
+			>
+				<Button outline color="dark"><CogSolid /></Button>
+				<Dropdown class="w-56 space-y-1 p-3">
+					<li>
+						<Toggle
+							color="purple"
+							class="rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-600"
+							checked={!Boolean(localStorage.getItem('futuristic-font'))}
+							on:click={toggleFont}>Futuristic Font</Toggle
+						>
+					</li>
+					<li>
+						<Toggle
+							color="purple"
+							class="rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-600"
+							checked={!Boolean(localStorage.getItem('animated-heading'))}
+							on:click={toggleAnimation}>Animated Heading</Toggle
+						>
+					</li>
+					<li class="my-auto">
+						<!-- <DarkMode {btnClass} /> -->
+						<Toggle
+							on:click={toggleMode}
+							color="purple"
+							checked={localStorage.getItem('color-theme') === 'dark'}
+							class="rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-600">Dark Mode</Toggle
+						>
+					</li>
+				</Dropdown>
+				<!-- <DarkMode {btnClass} /> -->
+				<!-- <Button class="!min-h-full">Status</Button> -->
+				<!-- <div class="!min-h-[8rem] inline-block ml-2 w-36 !p-0 !m-0 mr-[-0.5rem] sm:mr-[-1rem] dark:hover:bg-gray-700 hover:bg-gray-200 bg-gray-100 dark:bg-gray-800">Status</div>
+	</div> -->
+			</div>
+			<Button
+				class="ml-2 inline-block h-14"
+				color="dark"
+				outline
+				on:click={() => (hidden6 = !hidden6)}>Status</Button
+			>
+		</div>
+	</Navbar>
 
-<Drawer
-	activateClickOutside={false}
-	width="w-2/5"
-	placement="right"
-	transitionType="fly"
-	transitionParams={transitionParamsRight}
-	bind:hidden={hidden6}
-	backdrop={true}
-	id="sidebar6"
->
-	<div class="flex items-center">
-		<h5
-			id="drawer-label"
-			class="mb-4 inline-flex items-center text-base font-semibold text-gray-500 dark:text-gray-400"
-		>
-			<EnvelopeSolid class="me-2.5 h-5 w-5" />Status Messages
-		</h5>
-		<Button class="ml-auto" outline color="red" on:click={clearAll}>Clear all</Button>
-		<CloseButton on:click={() => (hidden6 = true)} class="mb-4 dark:text-white" />
-	</div>
-	<Hr hrClass="my-5" class="!my-0" />
-	<div class="space-y-2">
-		{#each $messageStore as msg}
-			<MessageItem name={msg.msg} id={msg.id} type={msg.type} timestamp={msg.timestamp} />
-		{:else}
-			<P>There are currently no messages.</P>
-		{/each}
+	<Drawer
+		activateClickOutside={false}
+		width="w-2/5"
+		placement="right"
+		transitionType="fly"
+		transitionParams={transitionParamsRight}
+		bind:hidden={hidden6}
+		backdrop={true}
+		id="sidebar6"
+	>
+		<div class="flex items-center">
+			<h5
+				id="drawer-label"
+				class="mb-4 inline-flex items-center text-base font-semibold text-gray-500 dark:text-gray-400"
+			>
+				<EnvelopeSolid class="me-2.5 h-5 w-5" />Status Messages
+			</h5>
+			<Button class="ml-auto" outline color="red" on:click={clearAll}>Clear all</Button>
+			<CloseButton on:click={() => (hidden6 = true)} class="mb-4 dark:text-white" />
+		</div>
+		<Hr hrClass="my-5" class="!my-0" />
+		<div class="space-y-2">
+			{#each $messageStore as msg}
+				<MessageItem name={msg.msg} id={msg.id} type={msg.type} timestamp={msg.timestamp} />
+			{:else}
+				<P>There are currently no messages.</P>
+			{/each}
 
-		<!-- <MessageItem name="test2" id="12" type="user"/> -->
-	</div>
-</Drawer>
+			<!-- <MessageItem name="test2" id="12" type="user"/> -->
+		</div>
+	</Drawer>
 
-<slot />
+	<slot />
+</main>
 
 <!-- #ef3b92 -->
 <!-- #0fa -->
@@ -351,12 +431,17 @@
 			0 0 92px #7a04eb,
 			0 0 102px #7a04eb,
 			0 0 151px #7a04eb;
-		span {
+		span.anim {
 			animation: neon-letter 2.5s infinite;
 		}
 	}
-	:global(div) {
+	:global(.future-font) {
+		// font-family: 'nulshock';
+		// font-family: 'ubuntu';
 		font-family: 'KogniGear';
+	}
+	:global(.normal-font) {
+		font-family: 'ubuntu';
 	}
 	@keyframes neon-letter {
 		from,

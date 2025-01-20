@@ -152,7 +152,7 @@ if (!building) {
             let msg = await client.hGetAll([rEventsPrefix, "user", newMsgs[index]].join(rSep));
             msg.type = "user";
             userMessages.push(msg);
-            mergedMessages.ushift(msg);
+            mergedMessages.unshift(msg);
             for (let i = 0; i < sseMsgsClients.length; i++) {
                 sseMsgsClients[i]("message", JSON.stringify(msg))
             }

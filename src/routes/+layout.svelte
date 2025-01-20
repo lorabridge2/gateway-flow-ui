@@ -27,7 +27,8 @@
 		Hr,
 		Dropdown,
 		Toggle,
-		Span
+		Span,
+		Indicator
 	} from 'flowbite-svelte';
 	import {
 		CaretLeftSolid,
@@ -75,8 +76,8 @@
 				window.document.documentElement.classList.add('dark');
 		}
 		theme.set(localStorage.getItem('color-theme') ?? 'light');
-		futureFont=localStorage.getItem("futuristic-font");
-		animatedHeading=localStorage.getItem("animated-heading");
+		futureFont = localStorage.getItem('futuristic-font');
+		animatedHeading = localStorage.getItem('animated-heading');
 	});
 	onMount(async () => {
 		const response = await fetch('/events', {
@@ -98,6 +99,9 @@
 				let msg = JSON.parse(message);
 				// messages.push(msg);
 				messageStore.set([msg, ...get(messageStore)]);
+				if (hidden6) {
+					msgIndicatorShown = true;
+				}
 				console.log(get(messageStore));
 				// if (!(dev['lb_id'] in devices)) {
 				// 	// deviceStore.set(devices);
@@ -205,6 +209,7 @@
 		}
 	}
 	let animatedHeading = null;
+	let msgIndicatorShown = false;
 </script>
 
 <svelte:window on:keydown={keypress} />
@@ -295,11 +300,23 @@
 	</div> -->
 			</div>
 			<Button
-				class="ml-2 inline-block h-14"
+				class="relative ml-2 inline-block h-14"
 				color="dark"
 				outline
-				on:click={() => (hidden6 = !hidden6)}>Status</Button
-			>
+				on:click={() => {
+					hidden6 = !hidden6;
+					msgIndicatorShown = false;
+				}}
+				>Status
+				<Indicator
+					hidden={!msgIndicatorShown}
+					color="none"
+					border
+					size="xl"
+					placement="top-right"
+					class="bg-slate-600 text-xs font-bold ring-2 ring-purple-700 dark:bg-slate-300 dark:ring-purple-500"
+				/>
+			</Button>
 		</div>
 	</Navbar>
 

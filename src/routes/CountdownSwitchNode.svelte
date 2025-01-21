@@ -37,32 +37,6 @@
 	<Hr hrClass="h-px my-1 bg-gray-200 border-0 dark:bg-gray-700" />
 	<div class="text-left text-[0.5rem]">
 		<div>Properties:</div>
-		<!-- <div class="flex space-x-3">
-			<div>
-				<Label class="mb-1 text-[0.5rem]">Start Time</Label>
-				<Input
-					type="time"
-					min="00:00"
-					max="23:59"
-					id="visitors"
-					placeholder=""
-					required
-					class="h-5 w-14 !py-0 text-[8px]"
-				/>
-			</div>
-			<div>
-				<Label class="mb-1 text-[0.5rem]">Stop Time</Label>
-				<Input
-					type="time"
-					min="00:00"
-					max="23:59"
-					id="visitors"
-					placeholder=""
-					required
-					class="h-5 w-14 !py-0 text-[8px]"
-				/>
-			</div>
-		</div> -->
 		<IntegerInput
 			{disabled}
 			class="mt-1"

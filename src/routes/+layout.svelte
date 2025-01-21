@@ -312,7 +312,7 @@
 					hidden={!msgIndicatorShown}
 					color="none"
 					border
-					size="xl"
+					size="lg"
 					placement="top-right"
 					class="bg-slate-600 text-xs font-bold ring-2 ring-purple-700 dark:bg-slate-300 dark:ring-purple-500"
 				/>

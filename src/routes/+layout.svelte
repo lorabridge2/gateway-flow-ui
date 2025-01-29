@@ -149,7 +149,9 @@
 	};
 
 	async function deploy() {
+		console.log("deploy called");
 		let doc = await get(db).get(get(activeTab));
+		console.log("after get db");
 		fetch('flow/deploy', {
 			method: 'POST',
 			body: JSON.stringify({ payload: doc }),
@@ -160,7 +162,9 @@
 	}
 
 	async function disable() {
+		console.log("disable called");
 		let doc = await get(db).get(get(activeTab));
+		console.log("after get db");
 		fetch('flow/disable', {
 			method: 'POST',
 			body: JSON.stringify({ payload: doc }),

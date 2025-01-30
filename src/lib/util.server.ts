@@ -3,7 +3,7 @@ import { redisConfig } from '$lib/config.server';
 import { building } from '$app/environment';
 
 export const rPrefix = "lorabridge:devman";
-export const rEventsPrefix = "lorabridge:events"
+export const rEventsPrefix = "lorabridge:events";
 export const rSep = ":";
 
 export async function pushFlowTask(task) {
@@ -69,4 +69,4 @@ export async function getUserMessages(client: RedisClientType) {
 
 export const sseClients: any = [];
 export const sseMsgsClients: any = [];
-export const sseStatusClients: any = [];
+export const sseStatusClients: any = {};

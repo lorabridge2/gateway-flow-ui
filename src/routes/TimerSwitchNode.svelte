@@ -85,7 +85,7 @@
 					placeholder=""
 					bind:value={data.start}
 					required
-					class="h-5 w-14 !py-0 text-[8px]"
+					class="h-5 w-14 !py-0 text-[8px] flex"
 					on:change={() => {
 						saveState();
 					}}
@@ -102,7 +102,7 @@
 					placeholder=""
 					bind:value={data.stop}
 					required
-					class="h-5 w-14 !py-0 text-[8px]"
+					class="h-5 w-14 !py-0 text-[8px] flex"
 					on:change={() => {
 						saveState();
 					}}

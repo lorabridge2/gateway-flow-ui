@@ -70,3 +70,4 @@ export async function getUserMessages(client: RedisClientType) {
 export const sseClients: any = [];
 export const sseMsgsClients: any = [];
 export const sseStatusClients: any = {};
+export const StatusPubSubs:any = {};

@@ -3,7 +3,7 @@ import { env } from '$env/dynamic/private';
 import { redisConfig } from '$lib/config.server';
 // import { Level } from "level";
 import { createClient, TimeSeriesAggregationType, type RedisClientOptions, type RedisClientType } from 'redis';
-import { sseClients, sseMsgsClients, getDevices, rSep, rEventsPrefix, getSystemMessages, getUserMessages } from '$lib/util.server';
+import { sseClients, sseMsgsClients, getDevices, rSep, rEventsPrefix, getSystemMessages, getUserMessages, sseStatusClients } from '$lib/util.server';
 import { building } from '$app/environment';
 import { json } from '@sveltejs/kit';
 
@@ -20,7 +20,7 @@ if (!building) {
 
 export const devices = await getDevices(client);
 
-export const subscriber = client.duplicate()
+export const subscriber: RedisClientType = client.duplicate()
     .on('error', err => console.error(err));
 export const systemSubscriber = client.duplicate()
     .on('error', err => console.error(err))
@@ -114,4 +114,22 @@ if (!building) {
     };
     await systemSubscriber.subscribe("__keyspace@0__:" + [rEventsPrefix, "system", "msgs"].join(rSep), systemMsgsListener)
     await userSubscriber.subscribe("__keyspace@0__:" + [rEventsPrefix, "user", "msgs"].join(rSep), userMsgsListener)
+
+    const taskListener = async (message, channel: string) => {
+        console.log(message);
+        console.log(channel);
+        channel = channel.replace("__keyspace@0__:", "")
+        if (channel.endsWith(":msg")) {
+            channel = channel.replace(":msg", "");
+        }
+        let tasks = await client.hGetAll(channel);
+        let status = await client.zRangeByScoreWithScores(channel + ":msg", "-inf", "+inf");
+        let flow_id = channel.split(":").pop();
+        for (const [key, emit] of Object.entries(sseStatusClients[flow_id])) {
+            emit("message", JSON.stringify({ tasks: tasks, status: status }));
+        }
+    };
+
+    await subscriber.pSubscribe("__keyspace@0__:lorabridge:flowman:task:status:*:msg", taskListener);
+    await subscriber.pSubscribe("__keyspace@0__:lorabridge:flowman:task:status:*[^:msg]", taskListener);
 }

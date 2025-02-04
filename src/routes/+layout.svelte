@@ -28,7 +28,10 @@
 		Dropdown,
 		Toggle,
 		Span,
-		Indicator
+		Indicator,
+		Card,
+		Progressbar,
+		Popover
 	} from 'flowbite-svelte';
 	import {
 		CaretLeftSolid,
@@ -47,7 +50,8 @@
 	import { sineIn } from 'svelte/easing';
 	import MessageItem from './MessageItem.svelte';
 	import { source } from 'sveltekit-sse';
-
+	import { DateTime } from 'luxon';
+	import ProgressInfo from './ProgressInfo.svelte';
 	// let messages = [];
 	// messageStore.set(messages);
 
@@ -149,9 +153,9 @@
 	};
 
 	async function deploy() {
-		console.log("deploy called");
+		console.log('deploy called');
 		let doc = await get(db).get(get(activeTab));
-		console.log("after get db");
+		console.log('after get db');
 		fetch('flow/deploy', {
 			method: 'POST',
 			body: JSON.stringify({ payload: doc }),
@@ -162,9 +166,9 @@
 	}
 
 	async function disable() {
-		console.log("disable called");
+		console.log('disable called');
 		let doc = await get(db).get(get(activeTab));
-		console.log("after get db");
+		console.log('after get db');
 		fetch('flow/disable', {
 			method: 'POST',
 			body: JSON.stringify({ payload: doc }),
@@ -261,6 +265,8 @@
 				<Button on:click={disable} color="red">Disable Flow</Button>
 			</ButtonGroup>
 		</div>
+
+		<ProgressInfo/>
 		<!-- svelte-ignore a11y_click_events_have_key_events -->
 		<!-- svelte-ignore a11y_no_static_element_interactions -->
 		<div class="flex">

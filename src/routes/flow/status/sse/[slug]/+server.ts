@@ -3,8 +3,10 @@ import { sseStatusClients } from '$lib/util.server'
 import { client,subscriber } from '$hook.server';
 
 export async function POST({ params, request }) {
-    let flowId = (await request.json()).flowId;
-    console.log(flowId);
+    console.log("slug "+ params.slug);
+    let flowId = params.slug;
+    // let flowId = (await request.json()).flowId;
+    // console.log(flowId);
     console.log("test");
     let clientId=crypto.randomUUID();
     return produce(async function start({ emit }) {

@@ -55,9 +55,10 @@
 				status = await response.json();
 				console.log(status);
 
-				const value = source('/flow/status/sse', {
-					options: { body: JSON.stringify({ flowId: id }) }
-				}).select('message');
+				const value = source(`/flow/status/sse/${id}`).select('message');
+                // , {
+				// 	options: { body: JSON.stringify({ flowId: id }) }
+				// }
 				value.subscribe((message) => {
 					console.log('update message status');
 					// not triggered on same message

@@ -38,11 +38,15 @@
 			? Math.round((getSum(status?.tasks) / (Object.keys(status?.tasks).length * 2)) * 100)
 			: 0;
 	};
+	let connection;
 	onMount(async () => {
 		// db.subscribe(()=>{
 
 		// })
 		activeTab.subscribe(async (id) => {
+			if (connection) {
+				await connection.close();
+			}
 			if (id) {
 				console.log(id);
 				const response = await fetch('/flow/status', {
@@ -55,8 +59,10 @@
 				status = await response.json();
 				console.log(status);
 
-				const value = source(`/flow/status/sse/${id}`).select('message');
-                // , {
+				connection = source(`/flow/status/sse/${id}`);
+				const value = connection.select('message');
+
+				// , {
 				// 	options: { body: JSON.stringify({ flowId: id }) }
 				// }
 				value.subscribe((message) => {
@@ -89,7 +95,7 @@
 <Card id="deploy_status" class="!p-2">
 	<div class="text-xs font-normal">
 		<Label class="inline">Deployment Status:</Label>
-		<Span class="ml-5">{status?.status[status?.status.length - 1].value ?? 'not deployed'}</Span>
+		<Span class="ml-5">{status?.status[status?.status.length - 1]?.value ?? 'not deployed'}</Span>
 	</div>
 	<Progressbar
 		progress={getPercentage()}

@@ -55,6 +55,12 @@
 	export let id: $$Props['id'];
 	const connections = useHandleConnections({ nodeId: id, type: 'target' });
 	$: isConnectable = $connections.length === 0;
+	// let local_start = null;
+	// $: {
+	// 	let utc = new Date(null, null, null, ...local_start.split(':'));
+	// 	data.start = `${utc.getUTCHours}:${utc.getUTCMinutes}`;
+	// 	console.log(data.start);
+	// }
 	// let initalisation = true;
 	// $: {
 	// 	if (!initalisation) {
@@ -76,6 +82,9 @@
 		<div class="flex space-x-3">
 			<div>
 				<Label class="mb-1 text-[0.5rem]">Start Time</Label>
+				<!-- `bind:value={get, set}` must not have surrounding parentheses https://svelte.dev/e/bind_invalid_parens -->
+				<!-- following comment is needed! Otherwise adds parentheses -->
+				<!-- prettier-ignore -->
 				<Input
 					{disabled}
 					type="time"
@@ -83,9 +92,21 @@
 					max="23:59"
 					id="visitors"
 					placeholder=""
-					bind:value={data.start}
+					bind:value={() => {
+						if (!data.start){
+							return undefined;
+						}
+						let local = new Date(Date.UTC(null, null, null, ...data.start.split(':')));
+						return `${local.getHours()}:${local.getMinutes()}`;
+					},
+					(v) => {
+						if(v){
+						let utc = new Date(null, null, null, ...v.split(':'));
+						console.log(`${utc.getUTCHours()}:${utc.getUTCMinutes()}`);
+						data.start = `${utc.getUTCHours()}:${utc.getUTCMinutes()}`;}
+					}}
 					required
-					class="h-5 w-14 !py-0 text-[8px] flex"
+					class="flex h-5 w-14 !py-0 text-[8px]"
 					on:change={() => {
 						saveState();
 					}}
@@ -93,6 +114,9 @@
 			</div>
 			<div>
 				<Label class="mb-1 text-[0.5rem]">Stop Time</Label>
+				<!-- `bind:value={get, set}` must not have surrounding parentheses https://svelte.dev/e/bind_invalid_parens -->
+				<!-- following comment is needed! Otherwise adds parentheses -->
+				<!-- prettier-ignore -->
 				<Input
 					{disabled}
 					type="time"
@@ -100,69 +124,32 @@
 					max="23:59"
 					id="visitors"
 					placeholder=""
-					bind:value={data.stop}
+					bind:value={() => {
+						if (!data.stop){
+							return undefined;
+						}
+						let local = new Date(Date.UTC(null, null, null, ...data.stop.split(':')));
+						return `${local.getHours()}:${local.getMinutes()}`;
+					},
+					(v) => {
+						if(v){
+						let utc = new Date(null, null, null, ...v.split(':'));
+						console.log(`${utc.getUTCHours()}:${utc.getUTCMinutes()}`);
+						data.stop = `${utc.getUTCHours()}:${utc.getUTCMinutes()}`;}
+					}}
 					required
-					class="h-5 w-14 !py-0 text-[8px] flex"
+					class="flex h-5 w-14 !py-0 text-[8px]"
 					on:change={() => {
 						saveState();
 					}}
 				/>
 			</div>
 		</div>
-		<!-- <div class="text-[0.25rem]"> -->
-		<!-- <div class="pt-8"> -->
-		<!-- <NumberInput min={5} max={10}>Test</NumberInput>  -->
-		<!-- <NumberInput/> 
-         <NumberInput/>
-         <NumberInput/> -->
-		<!-- <div class="flex">
-		<Label class="text-[0.5rem] text-nowrap mr-2">Min Hour</Label>
-		<ButtonGroup class="h-1 w-full">
-			<Button
-				class="z-10 h-3 w-1 !border-[#D1D5DB] px-2 py-0 text-[0.25rem] dark:!border-[#4B5563]"
-				color="alternative"
-				on:click={sub}><AngleLeftOutline size="xs" /></Button
-			>
-			<Input
-				class="h-3 w-8 py-0 text-[0.75rem] focus:!border-[#D1D5DB] focus:!ring-0 focus:dark:!border-[#4B5563]"
-				floatClass="text-[0.75rem]"
-				type="text"
-				placeholder=""
-				bind:value={count}
-			/>
-			<Button
-				class="z-10 ml-[-1px] h-3 w-1 !border-[#D1D5DB] px-2 py-0 text-[0.25rem] dark:!border-[#4B5563]"
-				color="alternative"
-				on:click={add}><AngleRightOutline size="xs" /></Button
-			>
-		</ButtonGroup>
-        </div> -->
-		<!-- </div> -->
-		<!-- <FloatingLabelInput id="floating_standard" name="floating_standard" type="number" label="Floating standard" style="outlined" classInput="text-[0.5rem] p-0" size="small" classLabel="text-[0.5rem]" classDiv="p-0">
-    lb_timerswitch_hour_min
-  </FloatingLabelInput>  -->
 	</div>
-	<!-- svelte-ignore a11y_no_static_element_interactions -->
-	<!-- <div on:mousedown={(e)=>{e.stopPropagation();}} >
-    <Range size="sm" min="0" max="10" bind:value={minmaxValue}/>
-</div> -->
-	<!-- </div> -->
 
-	<Handle type="source" position={sourcePosition ?? Position.Bottom} class={handleClass}/>
+	<Handle type="source" position={sourcePosition ?? Position.Bottom} class={handleClass} />
 </div>
 
-<!-- <style>
-	:global(.svelte-flow__node-timer) {
-		padding: 10px;
-		border-radius: 3px;
-		width: 150px;
-		font-size: 12px;
-		color: #f8f8f8;
-		text-align: center;
-		border: 1px solid #3c3c3c;
-		background-color: #1e1e1e;
-	}
-</style> -->
 <style>
 	:global(.svelte-flow__node-timer) {
 		padding: 10px;

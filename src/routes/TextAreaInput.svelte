@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { ButtonGroup, Label, Input, Textarea } from 'flowbite-svelte';
 	export let value = '';
+	export let maxlength:number = 64;
 	export let filter: Function = undefined;
 	export let placeholder = '';
 	export let disabled = false;
@@ -27,6 +28,7 @@
 			style="resize:none;scrollbar-width:thin;"
 			rows="4"
 			placeholder="Your user message"
+			bind:maxlength
 			bind:value
 		></Textarea>
 			<!-- <Input

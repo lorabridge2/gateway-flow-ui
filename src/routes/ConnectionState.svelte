@@ -7,6 +7,15 @@
 	let diff: number;
 	let last_seen;
 	$: diff = (new Date() - new Date(last_seen * 1000)) / 1000 / 60;
+	function check() {
+		setTimeout(() => {
+			let tmp = last_seen;
+			last_seen += 1;
+			last_seen = tmp;
+			console.log('check');
+			check();
+		}, 1000 * 60);
+	}
 	onMount(async () => {
 		const response = await fetch('/connection', {
 			method: 'POST',
@@ -27,6 +36,7 @@
 			}
 		});
 
+		check();
 		// 				// , {
 		// 				// 	options: { body: JSON.stringify({ flowId: id }) }
 		// 				// }

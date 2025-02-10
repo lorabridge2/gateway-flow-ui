@@ -12,10 +12,10 @@ export async function POST({ params, request }) {
     client.del([rEventsPrefix, "user", "msgs"].join(rSep));
 
     for (let index = 0; index < sysIDs.length; index++) {
-        client.del([rEventsPrefix, "system", sysIDs[index]]);
+        client.del([rEventsPrefix, "system", sysIDs[index]].join(rSep));
     }
     for (let index = 0; index < userIDs.length; index++) {
-        client.del([rEventsPrefix, "user", userIDs[index]]);
+        client.del([rEventsPrefix, "user", userIDs[index]].join(rSep));
     }
     await reloadMessages();
     return new Response(undefined);

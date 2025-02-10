@@ -141,7 +141,7 @@ if (!building) {
         let tasks = await client.hGetAll(channel);
         let status = await client.zRangeByScoreWithScores(channel + ":msg", "-inf", "+inf");
         let flow_id = channel.split(":").pop();
-        Object.values(mappingFlowToUUID[flow_id]).forEach(emit =>{
+        Object.values(mappingFlowToUUID[flow_id]).forEach(emit => {
             emit(SSEEvents.STATUS, JSON.stringify({ tasks: tasks, status: status }));
         });
         // for (const [key, emit] of Object.entries(sseStatusClients[flow_id])) {
@@ -151,4 +151,9 @@ if (!building) {
 
     await subscriber.pSubscribe("__keyspace@0__:lorabridge:flowman:task:status:*:msg", taskListener);
     await subscriber.pSubscribe("__keyspace@0__:lorabridge:flowman:task:status:*[^:msg]", taskListener);
+
+    await subscriber.subscribe("__keyspace@0__:lorabridge:connection:last_seen", async (msg, channel) => {
+        let timestamp = await client.get("lorabridge:connection:last_seen");
+        Object.values(sseClients).forEach(emit => emit(SSEEvents.CONNECTION, JSON.stringify({ last_seen: parseFloat(timestamp) })));
+    })
 }

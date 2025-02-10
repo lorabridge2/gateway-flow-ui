@@ -1,5 +1,5 @@
 <script>
-	import { activeTab, db } from '$lib/util';
+	import { activeTab, db, sseClientId, SSEEvents } from '$lib/util';
 	import { Card, Label, P, Popover, Progressbar, Span } from 'flowbite-svelte';
 	import { BanOutline } from 'flowbite-svelte-icons';
 	import { DateTime } from 'luxon';
@@ -38,15 +38,30 @@
 			? Math.round((getSum(status?.tasks) / (Object.keys(status?.tasks).length * 2)) * 100)
 			: 0;
 	};
-	let connection;
+	// let connection;
 	onMount(async () => {
 		// db.subscribe(()=>{
 
 		// })
-		activeTab.subscribe(async (id) => {
-			if (connection) {
-				await connection.close();
+		let connection = source(`/sse`);
+		const value = connection.select(SSEEvents.STATUS);
+
+		// , {
+		// 	options: { body: JSON.stringify({ flowId: id }) }
+		// }
+		value.subscribe((message) => {
+			console.log('update message status');
+			// not triggered on same message
+			// Update the reactive variable
+			if (message) {
+				console.log(message);
+				status = JSON.parse(message);
 			}
+		});
+		activeTab.subscribe(async (id) => {
+			// if (connection) {
+			// 	await connection.close();
+			// }
 			if (id) {
 				console.log(id);
 				const response = await fetch('/flow/status', {
@@ -58,22 +73,19 @@
 				});
 				status = await response.json();
 				console.log(status);
-
-				connection = source(`/flow/status/sse/${id}`);
-				const value = connection.select('message');
-
-				// , {
-				// 	options: { body: JSON.stringify({ flowId: id }) }
-				// }
-				value.subscribe((message) => {
-					console.log('update message status');
-					// not triggered on same message
-					// Update the reactive variable
-					if (message) {
-						console.log(message);
-						status = JSON.parse(message);
-					}
+				sseClientId.subscribe(async (uuid) => {
+					await fetch('/sse/register/flow', {
+						method: 'POST',
+						body: JSON.stringify({ flowId: id, uuid: uuid }),
+						headers: {
+							'Content-Type': 'application/json'
+						}
+					});
 				});
+
+				// status = await response.json();
+				// console.log(status);
+
 				// let doc = await get(db).get(id);
 				// console.log(doc);
 			}

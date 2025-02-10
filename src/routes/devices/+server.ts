@@ -1,8 +1,6 @@
-import { produce } from 'sveltekit-sse'
-import { sseClients } from '$lib/util.server'
-import { client, devices } from "$hook.server";
+import { devices } from "$hook.server";
 
 export function POST() {
-    console.log("test");
+    console.log("devices");
     return new Response(JSON.stringify(devices));
 }

@@ -346,8 +346,8 @@
 		<SidebarGroup>
 			<div dir="rtl" class="sticky mt-[-0.75rem] pr-5">
 				<ButtonGroup class="space-x-px bg-gray-100 shadow-none dark:bg-gray-800">
-					<Button class="h-7 w-7 border-0 p-1" color="green" outline on:click={addEntry}
-						><CirclePlusOutline /></Button
+					<Button class="h-7 border-0 p-1" color="green" outline on:click={addEntry}
+						>New<CirclePlusOutline class="mr-2"/></Button
 					>
 				</ButtonGroup>
 			</div>

@@ -1,8 +1,6 @@
-import { produce } from 'sveltekit-sse'
-import { sseClients } from '$lib/util.server'
-import { client, devices, mergedMessages } from "$hook.server";
+import { mergedMessages } from "$hook.server";
 
 export function POST() {
-    console.log("test");
+    console.log("events");
     return new Response(JSON.stringify(mergedMessages));
 }

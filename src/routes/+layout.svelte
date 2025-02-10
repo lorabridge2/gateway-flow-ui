@@ -10,7 +10,11 @@
 		save,
 		activeTab,
 		db,
-		messageStore
+		messageStore,
+		SSEEvents,
+
+		sseClientId
+
 	} from '$lib/util';
 	import {
 		Navbar,
@@ -52,6 +56,7 @@
 	import { source } from 'sveltekit-sse';
 	import { DateTime } from 'luxon';
 	import ProgressInfo from './ProgressInfo.svelte';
+	import ConnectionState from './ConnectionState.svelte';
 	// let messages = [];
 	// messageStore.set(messages);
 
@@ -93,7 +98,17 @@
 		// messages = await response.json();
 		messageStore.set(await response.json());
 		console.log(get(messageStore));
-		const value = source('/events/sse').select('message');
+		// source to same endpoint is cached
+		const connection = source('/sse');
+		connection.select(SSEEvents.REGISTERED).subscribe(message => {
+			if (message) {
+				console.log(message);
+				let msg = JSON.parse(message);
+				sseClientId.set(msg['uuid']);
+			}
+		}
+		)
+		const value = connection.select(SSEEvents.MESSAGE);
 		value.subscribe((message) => {
 			console.log('update message');
 			// not triggered on same message
@@ -266,7 +281,8 @@
 			</ButtonGroup>
 		</div>
 
-		<ProgressInfo/>
+		<ProgressInfo />
+		<!-- <ConnectionState /> -->
 		<!-- svelte-ignore a11y_click_events_have_key_events -->
 		<!-- svelte-ignore a11y_no_static_element_interactions -->
 		<div class="flex">

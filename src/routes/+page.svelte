@@ -6,7 +6,7 @@
 	import Nodebar from './Nodebar.svelte';
 	import Filebar from './Filebar.svelte';
 	import { source } from 'sveltekit-sse';
-	import { deviceStore } from '$lib/util';
+	import { deviceStore, SSEEvents } from '$lib/util';
 
 	let devices: any;
 	onMount(async () => {
@@ -20,7 +20,7 @@
 		devices = await response.json();
 		console.log(devices);
 		deviceStore.set(devices);
-		const value = source('/devices/sse').select('message');
+		const value = source('/sse').select(SSEEvents.DEVICE);
 		value.subscribe((message: string) => {
 			// Update the reactive variable
 			if (message) {

@@ -34,6 +34,7 @@ export let showBack = writable();
 export let showForth = writable();
 
 export let closeMenues = writable(0);
+export let sseClientId = writable(0);
 
 export const saveState = async () => {
     let database = get(db);
@@ -49,3 +50,11 @@ export const saveState = async () => {
 };
 
 export let handleClass = "!w-3 !h-3 !border-2";
+
+export const enum SSEEvents {
+    REGISTERED = "registered",
+    DEVICE = "device",
+    MESSAGE = "message",
+    STATUS = "status",
+    CONNECTION = "connection",
+}

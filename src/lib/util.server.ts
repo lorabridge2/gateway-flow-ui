@@ -67,7 +67,10 @@ export async function getUserMessages(client: RedisClientType) {
     return await getMessages("user", client);
 }
 
-export const sseClients: any = [];
-export const sseMsgsClients: any = [];
+// export const sseMsgsClients: any = [];
 export const sseStatusClients: any = {};
-export const StatusPubSubs:any = {};
+export const StatusPubSubs: any = {};
+
+export const sseClients: any = {};
+export const mappingUUIDToFlow: any = {};
+export const mappingFlowToUUID: any = {};

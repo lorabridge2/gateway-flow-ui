@@ -3,9 +3,9 @@ import { env } from '$env/dynamic/private';
 import { redisConfig } from '$lib/config.server';
 // import { Level } from "level";
 import { createClient, TimeSeriesAggregationType, type RedisClientOptions, type RedisClientType } from 'redis';
-import { sseClients, sseMsgsClients, getDevices, rSep, rEventsPrefix, getSystemMessages, getUserMessages, sseStatusClients } from '$lib/util.server';
+import { sseClients, getDevices, rSep, rEventsPrefix, getSystemMessages, getUserMessages, sseStatusClients, mappingFlowToUUID } from '$lib/util.server';
 import { building } from '$app/environment';
-import { json } from '@sveltejs/kit';
+import { SSEEvents } from '$lib/util';
 
 // export const db = new Level<string, any>(env.DBPath ?? './db', { valueEncoding: 'json' });
 
@@ -45,15 +45,23 @@ if (!building) {
     const listener = (message, channel) => {
         console.log("pubsub");
         console.log(message);
-        for (let i = 0; i < sseClients.length; i++) {
-            console.log("pubsub");
-            console.log(message);
-            let dev = JSON.parse(message);
-            if (!(dev["lb_id"] in devices)) {
-                devices[dev["lb_id"]] = dev;
-            }
-            sseClients[i]("message", message);
+        let dev = JSON.parse(message);
+        if (!(dev["lb_id"] in devices)) {
+            devices[dev["lb_id"]] = dev;
         }
+        Object.values(sseClients).forEach(emit => {
+            console.log("emitted device event");
+            emit(SSEEvents.DEVICE, message);
+        });
+        // for (let i = 0; i < sseClients.length; i++) {
+        //     console.log("pubsub");
+        //     console.log(message);
+        //     let dev = JSON.parse(message);
+        //     if (!(dev["lb_id"] in devices)) {
+        //         devices[dev["lb_id"]] = dev;
+        //     }
+        //     sseClients[i]("message", message);
+        // }
     };
     await subscriber.subscribe('lorabridge:devman:device:notification', listener);
 
@@ -65,9 +73,9 @@ if (!building) {
         console.log(channel);
         let startIndex = 0;
         if (systemMessages.length > 0) {
-            console.log(systemMessages[systemMessages.length - 1]);
-            console.log(systemMessages[systemMessages.length - 1].timestamp);
-            console.log(parseFloat(systemMessages[systemMessages.length - 1].timestamp) + .1);
+            // console.log(systemMessages[systemMessages.length - 1]);
+            // console.log(systemMessages[systemMessages.length - 1].timestamp);
+            // console.log(parseFloat(systemMessages[systemMessages.length - 1].timestamp) + .1);
             startIndex = parseFloat(systemMessages[systemMessages.length - 1].timestamp) + .1;
         }
         let newMsgs = await client.zRangeByScore([rEventsPrefix, "system", "msgs"].join(rSep), startIndex, "+inf")
@@ -78,10 +86,14 @@ if (!building) {
             msg.type = "system";
             systemMessages.push(msg);
             mergedMessages.unshift(msg);
-            for (let i = 0; i < sseMsgsClients.length; i++) {
-                sseMsgsClients[i]("message", JSON.stringify(msg));
-                console.log("message");
-            }
+            Object.values(sseClients).forEach(emit => {
+                console.log("emitted system message event");
+                emit(SSEEvents.MESSAGE, JSON.stringify(msg));
+            });
+            // for (let i = 0; i < sseMsgsClients.length; i++) {
+            //     sseMsgsClients[i]("message", JSON.stringify(msg));
+            //     console.log("message");
+            // }
             // msgs.push(msg);
         }
 
@@ -105,9 +117,13 @@ if (!building) {
             msg.type = "user";
             userMessages.push(msg);
             mergedMessages.unshift(msg);
-            for (let i = 0; i < sseMsgsClients.length; i++) {
-                sseMsgsClients[i]("message", JSON.stringify(msg))
-            }
+            Object.values(sseClients).forEach(emit => {
+                console.log("emitted system message event");
+                emit(SSEEvents.MESSAGE, JSON.stringify(msg));
+            });
+            // for (let i = 0; i < sseMsgsClients.length; i++) {
+            //     sseMsgsClients[i]("message", JSON.stringify(msg))
+            // }
             // msgs.push(msg);
         }
 
@@ -125,9 +141,12 @@ if (!building) {
         let tasks = await client.hGetAll(channel);
         let status = await client.zRangeByScoreWithScores(channel + ":msg", "-inf", "+inf");
         let flow_id = channel.split(":").pop();
-        for (const [key, emit] of Object.entries(sseStatusClients[flow_id])) {
-            emit("message", JSON.stringify({ tasks: tasks, status: status }));
-        }
+        Object.values(mappingFlowToUUID[flow_id]).forEach(emit =>{
+            emit(SSEEvents.STATUS, JSON.stringify({ tasks: tasks, status: status }));
+        });
+        // for (const [key, emit] of Object.entries(sseStatusClients[flow_id])) {
+        //     emit("message", JSON.stringify({ tasks: tasks, status: status }));
+        // }
     };
 
     await subscriber.pSubscribe("__keyspace@0__:lorabridge:flowman:task:status:*:msg", taskListener);

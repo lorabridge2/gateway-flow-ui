@@ -206,7 +206,7 @@
 		document.documentElement.classList.toggle('dark');
 		localStorage.setItem(
 			'color-theme',
-			localStorage.getItem('color-theme') == 'light' ? 'dark' : 'light'
+			localStorage.getItem('color-theme') != 'dark' ? 'dark' : 'light'
 		);
 		theme.set(localStorage.getItem('color-theme'));
 	}

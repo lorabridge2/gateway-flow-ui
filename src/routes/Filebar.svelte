@@ -33,9 +33,7 @@
 		save,
 		activeTab,
 		syncDB,
-
 		getName
-
 	} from '$lib/util';
 	onMount(() => {
 		console.log('ONMOUNT');
@@ -46,6 +44,10 @@
 			// 	return item.doc;
 			// });
 			// let tmp = [];
+			if (docs.total_rows == 0) {
+				let id = getID();
+				db.put({ _id: id, name: 'Untitled', id: id });
+			}
 			let tmp = {};
 			for (let i = 0; i < docs.rows.length; i++) {
 				try {
@@ -352,7 +354,7 @@
 			<div dir="rtl" class="sticky mt-[-0.75rem] pr-5">
 				<ButtonGroup class="space-x-px bg-gray-100 shadow-none dark:bg-gray-800">
 					<Button class="h-7 border-0 p-1" color="green" outline on:click={addEntry}
-						>New<CirclePlusOutline class="mr-2"/></Button
+						>New<CirclePlusOutline class="mr-2" /></Button
 					>
 				</ButtonGroup>
 			</div>

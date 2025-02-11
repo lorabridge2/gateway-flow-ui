@@ -32,7 +32,10 @@
 		cancel,
 		save,
 		activeTab,
-		syncDB
+		syncDB,
+
+		getName
+
 	} from '$lib/util';
 	onMount(() => {
 		console.log('ONMOUNT');
@@ -320,8 +323,10 @@
 	};
 
 	const addEntry = (event) => {
-		let name = [randomAdjective(), randomUser()].join(' ');
-		let id = Date.now().toString();
+		// let name = [randomAdjective(), randomUser()].join(' ');
+		let name = getName();
+		let id = getID();
+		// let id = Date.now().toString();
 		db.put({ name: name, id: id, _id: id });
 
 		// fileItems.update((arr) => {

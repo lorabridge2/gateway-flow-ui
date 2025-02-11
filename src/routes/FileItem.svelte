@@ -1,41 +1,19 @@
 <script lang="ts">
 	import { Button, Input, P } from 'flowbite-svelte';
-	import { CircleMinusOutline, PenOutline, TrashBinOutline } from 'flowbite-svelte-icons';
+	import {
+		CircleMinusOutline,
+		FileCopyOutline,
+		PenOutline,
+		TrashBinOutline
+	} from 'flowbite-svelte-icons';
 	import { inputClass } from 'flowbite-svelte/Radio.svelte';
-	import { mount, onMount, unmount } from 'svelte';
+	import { mount, onDestroy, onMount, unmount } from 'svelte';
 	import { createClassComponent } from 'svelte/legacy';
 	import PouchDB from 'pouchdb';
 	import ItemContextMenu from './ItemContextMenu.svelte';
-	import { renameItem, delItem, activeTab, syncDB } from '$lib/util';
+	import { renameItem, delItem, activeTab, syncDB, duplicateItem, getID, getName } from '$lib/util';
 	import { get } from 'svelte/store';
 	import { couchdb } from '$lib/config';
-	let db;
-	onMount(async () => {
-		db = new PouchDB(couchdb.db);
-		// try {
-		// 	let syncDoc = await get(syncDB).get(id);
-		// 	let doc = await db.get(id);
-		// 	if (doc._rev === syncDoc.rev) {
-		// 		status_color = 'bg-green-400';
-		// 	} else {
-		// 		status_color = 'bg-yellow-400';
-		// 	}
-		// } catch (err) {
-		// 	status_color = 'bg-red-400';
-		// }
-
-	// 	const changes = get(syncDB)
-	// 		.changes({
-	// 			since: 'now',
-	// 			live: true,
-	// 			include_docs: true
-	// 		})
-	// 		.on('change', function (change) {
-	// 			if(change.id===id){
-	// 				status_color='bg-green-400'
-	// 			}
-	// 		});
-	});
 	interface Props {
 		name: string;
 		id: string;
@@ -46,6 +24,72 @@
 	let inputVal: string = $state('');
 	let hidden = $state(true);
 	let active = $state(false);
+
+	let db;
+	const duplicate = async (event) => {
+		event?.preventDefault();
+		event?.stopPropagation();
+		if (!db) {
+			return;
+		}
+		let newId = getID();
+		let doc = await db.get(id);
+		console.log(doc);
+		await db.put({
+			_id: newId,
+			name: getName(),
+			id: newId,
+			edges: doc.edges,
+			nodes: doc.nodes
+		});
+		activeTab.set(newId);
+		duplicateItem.set(undefined);
+	};
+	const rename = async (event) => {
+		hidden = !hidden;
+		console.log('rename');
+		if (inputVal) {
+			name = inputVal;
+			let doc = await db.get(id);
+			console.log(doc);
+			await db.put({
+				_id: id,
+				_rev: doc._rev,
+				name: inputVal,
+				id: id,
+				edges: doc.edges,
+				nodes: doc.nodes
+			});
+			inputVal = '';
+		}
+		event?.preventDefault();
+		event?.stopPropagation();
+		renameItem.set(undefined);
+	};
+
+	const del = async (event) => {
+		event?.preventDefault();
+		event?.stopPropagation();
+		console.log('delete');
+
+		let doc = await db.get(id);
+		await db.remove(doc);
+
+		let syncDoc = await get(syncDB).get(id);
+		await get(syncDB).remove(syncDoc);
+
+		fetch('flow/delete', {
+			method: 'POST',
+			body: JSON.stringify({ payload: doc }),
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		});
+	};
+
+	onMount(async () => {
+		db = new PouchDB(couchdb.db);
+	});
 
 	// let status_color = $state('bg-gray-500'); //bg-green-500
 	activeTab.subscribe((activeId) => {
@@ -68,39 +112,19 @@
 		}
 	});
 
-	const rename = async (event) => {
-		hidden = !hidden;
-		console.log('rename');
-		if (inputVal) {
-			name = inputVal;
-			let doc = await db.get(id);
-			console.log(doc);
-			await db.put({ _id: id, _rev: doc._rev, name: inputVal, id: id });
-			inputVal = '';
+	let dupUnsub = duplicateItem.subscribe((duplicateId) => {
+		if (duplicateId === id) {
+			console.log('dup id check ' + id);
+			duplicate(null);
 		}
-		event?.preventDefault();
-		event?.stopPropagation();
-	};
+	});
 
-	const del = async (event) => {
-		event?.preventDefault();
-		event?.stopPropagation();
-		console.log('delete');
+	// necessary because for some reasons duplicateItem handlers seem to be copied, when the item is duplicated
+	// even though the id changes
+	onDestroy(() => {
+		dupUnsub();
+	});
 
-		let doc = await db.get(id);
-		await db.remove(doc);
-
-		let syncDoc = await get(syncDB).get(id);
-		await get(syncDB).remove(syncDoc);
-
-		fetch('flow/delete', {
-			method: 'POST',
-			body: JSON.stringify({ payload: doc }),
-			headers: {
-				'Content-Type': 'application/json'
-			}
-		});
-	};
 	const select = (event) => {
 		// active = true;
 		activeTab.set(id);
@@ -127,7 +151,7 @@
 		>
 			<span class="w-2 shrink-0 {status_color}"></span>
 			<span class="flex w-full px-2 py-2">
-				<P class="py-auto break-all {!hidden ? ' hidden' : ''}">{name}</P>
+				<P class="py-auto break-all {!hidden ? ' hidden' : ''}">{name} {id}</P>
 				<Input
 					class="h-1 w-[7rem] {hidden ? ' hidden' : ''}"
 					placeholder={name}
@@ -137,6 +161,11 @@
 				<span class="py-auto ml-auto shrink-0">
 					<Button class="ml-1 mr-0 h-6 w-6 border-0 px-0" outline on:click={rename}
 						><PenOutline /></Button
+					>
+					<Button
+						class="ml-1 mr-0 h-6 w-6 border-0 px-0"
+						outline
+						on:click={duplicate}><FileCopyOutline /></Button
 					>
 					<Button class="ml-[-0.25rem] h-6 w-6 border-0 px-0" color="red" on:click={del} outline
 						><TrashBinOutline /></Button

@@ -13,8 +13,8 @@ Inspired from: Context Menu https://svelte.dev/repl/3a33725c3adb4f57b46b597f9dad
 <script lang="ts" context="module">
 	import { tick } from 'svelte';
 	import { writable } from 'svelte/store';
-	import { PenOutline, TrashBinOutline } from 'flowbite-svelte-icons';
-	import {closeMenues} from '$lib/util';
+	import { FileCopyOutline, PenOutline, TrashBinOutline } from 'flowbite-svelte-icons';
+	import { closeMenues, duplicateItem } from '$lib/util';
 </script>
 
 <script>
@@ -30,7 +30,7 @@ Inspired from: Context Menu https://svelte.dev/repl/3a33725c3adb4f57b46b597f9dad
 	let showMenu = false;
 	// to display some text
 	let content;
-    export let id;
+	export let id;
 	closeMenues.subscribe(() => {
 		showMenu = false;
 	});
@@ -89,17 +89,23 @@ Inspired from: Context Menu https://svelte.dev/repl/3a33725c3adb4f57b46b597f9dad
 	}
 	let menuItems = [
 		{
+			name: 'duplicate',
+			onClick: () => {console.log(id + " context menu");duplicateItem.set(id);},
+			displayText: 'Duplicate',
+			class: FileCopyOutline
+		},
+		{
 			name: 'renameItem',
-			onClick: ()=>renameItem.set(id),
+			onClick: () => renameItem.set(id),
 			displayText: 'Rename',
 			class: PenOutline //'fa-solid fa-plus'
 		},
 		{
 			name: 'trash',
-			onClick: ()=>delItem.set(id),
+			onClick: () => delItem.set(id),
 			displayText: 'Delete',
 			class: TrashBinOutline //'fa-solid fa-trash-can'
-		}
+		},
 	];
 </script>
 
@@ -108,15 +114,15 @@ Inspired from: Context Menu https://svelte.dev/repl/3a33725c3adb4f57b46b597f9dad
 		use:getContextMenuDimension
 		style="position: absolute; top:{pos.y}px; left:{pos.x}px; border-bottom-width:0px; height:-2px"
 	>
-		<div class="navbar dark:bg-gray-700 bg-white border dark:border-white border-black" id="navbar">
+		<div class="navbar border border-black bg-white dark:border-white dark:bg-gray-700" id="navbar">
 			<ul>
 				{#each menuItems as item}
 					{#if item.name == 'hr'}
 						<hr />
 					{:else}
 						<li>
-							<button class="dark:!bg-gray-700 !bg-white" on:click={item.onClick}
-								><span class="flex dark:text-white text-black"
+							<button class="!bg-white dark:!bg-gray-700" on:click={item.onClick}
+								><span class="flex text-black dark:text-white"
 									><svelte:component this={item.class} class="mr-2"
 									></svelte:component>{item.displayText}</span
 								></button

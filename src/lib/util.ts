@@ -1,12 +1,17 @@
 import { nanoid } from 'nanoid';
 import { get, writable } from 'svelte/store';
+import { randomAdjective, randomUser } from './names';
 
 export function getID() {
-    let id;
-    do {
-        id = nanoid();
-    } while (id.startsWith("_"))
-    return id;
+    return Date.now().toString();
+    // let id;
+    // do {
+    //     id = nanoid();
+    // } while (id.startsWith("_"))
+    // return id;
+}
+export function getName() {
+    return [randomAdjective(), randomUser()].join(' ');
 }
 export function getRandomInt(min: number, max: number) {
     const minCeiled = Math.ceil(min);
@@ -30,6 +35,7 @@ export let messageStore = writable({});
 
 export let renameItem = writable();
 export let delItem = writable();
+export let duplicateItem = writable();
 export let showBack = writable();
 export let showForth = writable();
 

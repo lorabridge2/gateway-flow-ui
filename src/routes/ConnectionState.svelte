@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { SSEEvents } from '$lib/util';
 	import { Span } from 'flowbite-svelte';
-	import { CirclePlusOutline } from 'flowbite-svelte-icons';
 	import { onMount } from 'svelte';
 	import { source } from 'sveltekit-sse';
 	let diff: number;
@@ -37,18 +36,6 @@
 		});
 
 		check();
-		// 				// , {
-		// 				// 	options: { body: JSON.stringify({ flowId: id }) }
-		// 				// }
-		// 				value.subscribe((message) => {
-		// 					console.log('update message status');
-		// 					// not triggered on same message
-		// 					// Update the reactive variable
-		// 					if (message) {
-		// 						console.log(message);
-		// 						status = JSON.parse(message);
-		// 					}
-		// 				});
 	});
 </script>
 

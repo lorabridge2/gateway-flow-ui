@@ -330,7 +330,7 @@
 		let id = getID();
 		// let id = Date.now().toString();
 		db.put({ name: name, id: id, _id: id });
-
+		activeTab.set(id);
 		// fileItems.update((arr) => {
 		// 	arr.unshift({ name: id, id: id });
 		// 	return arr;

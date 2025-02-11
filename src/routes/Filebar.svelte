@@ -46,7 +46,7 @@
 			// let tmp = [];
 			if (docs.total_rows == 0) {
 				let id = getID();
-				db.put({ _id: id, name: 'Untitled', id: id });
+				db.put({ _id: id, name: getName(), id: id });
 			}
 			let tmp = {};
 			for (let i = 0; i < docs.rows.length; i++) {
@@ -100,7 +100,7 @@
 					let tab = get(activeTab);
 					if (change.deleted && docs.total_rows == 0) {
 						let id = getID();
-						db.put({ _id: id, name: 'Untitled', id: id });
+						db.put({ _id: id, name: getName(), id: id });
 					} else if (change.deleted && change.id === tab) {
 						let fileItems = Object.values(fileDict);
 						for (let i = 0; i < fileItems.length; i++) {

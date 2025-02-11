@@ -151,23 +151,23 @@
 		>
 			<span class="w-2 shrink-0 {status_color}"></span>
 			<span class="flex w-full px-2 py-2">
-				<P class="py-auto break-all {!hidden ? ' hidden' : ''}">{name}</P>
+				<P class="py-auto break-words overflow-hidden {!hidden ? ' hidden' : ''}">{name}</P>
 				<Input
 					class="h-1 w-[7rem] {hidden ? ' hidden' : ''}"
 					placeholder={name}
 					bind:value={inputVal}
 					on:keydown={enter}
 				></Input>
-				<span class="py-auto ml-auto shrink-0">
-					<Button class="ml-1 mr-0 h-6 w-6 border-0 px-0" outline on:click={rename}
+				<span dir="rtl" class="grid grid-cols-2 mb-auto ml-auto shrink-0">
+					<Button class="ml-1 mr-0 h-6 w-5 border-0 px-0" outline on:click={rename}
 						><PenOutline /></Button
 					>
 					<Button
-						class="ml-1 mr-0 h-6 w-6 border-0 px-0"
+						class="mr-0 h-6 w-5 border-0 px-0"
 						outline
 						on:click={duplicate}><FileCopyOutline /></Button
 					>
-					<Button class="ml-[-0.25rem] h-6 w-6 border-0 px-0" color="red" on:click={del} outline
+					<Button class="h-6 w-5 border-0 px-0" color="red" on:click={del} outline
 						><TrashBinOutline /></Button
 					>
 				</span>

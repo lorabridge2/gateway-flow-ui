@@ -151,7 +151,7 @@
 		>
 			<span class="w-2 shrink-0 {status_color}"></span>
 			<span class="flex w-full px-2 py-2">
-				<P class="py-auto break-all {!hidden ? ' hidden' : ''}">{name} {id}</P>
+				<P class="py-auto break-all {!hidden ? ' hidden' : ''}">{name}</P>
 				<Input
 					class="h-1 w-[7rem] {hidden ? ' hidden' : ''}"
 					placeholder={name}
